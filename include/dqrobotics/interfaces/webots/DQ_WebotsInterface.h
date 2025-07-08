@@ -29,9 +29,8 @@ Contributors:
 #pragma once
 #include <dqrobotics/DQ.h>
 #include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterface.h>
-#include <thread>
 #include <atomic>
-
+#include <memory>
 
 using namespace DQ_robotics;
 using namespace Eigen;
@@ -43,6 +42,7 @@ public:
     DQ_WebotsInterface();
     ~DQ_WebotsInterface();
 
+    //-----Concrete methods from DQ_CoppeliaSimInterface---------------------------------------------
     bool connect(const std::string& host, const int& port, const int&TIMEOUT_IN_MILISECONDS) override;
     void trigger_next_simulation_step() const override;
     void set_stepping_mode(const bool& flag) const override;
@@ -62,15 +62,19 @@ public:
     void set_object_pose       (const std::string& objectname, const DQ& h) override;
 
     VectorXd get_joint_positions(const std::vector<std::string>& jointnames) override;
-    void     set_joint_positions(const std::vector<std::string>& jointnames, const VectorXd& joint_positions) override;
-    void     set_joint_target_positions(const std::vector<std::string>& jointnames, const VectorXd& joint_target_positions) override;
+    void     set_joint_positions(const std::vector<std::string>& jointnames,
+                                 const VectorXd& joint_positions) override;
+    void     set_joint_target_positions(const std::vector<std::string>& jointnames,
+                                        const VectorXd& joint_target_positions) override;
 
     VectorXd get_joint_velocities(const std::vector<std::string>& jointnames) override;
-    void     set_joint_target_velocities(const std::vector<std::string>& jointnames, const VectorXd& joint_target_velocities) override;
+    void     set_joint_target_velocities(const std::vector<std::string>& jointnames,
+                                         const VectorXd& joint_target_velocities) override;
 
-    void     set_joint_target_forces(const std::vector<std::string>& jointnames, const VectorXd& forces) override;
+    void     set_joint_target_forces(const std::vector<std::string>& jointnames,
+                                     const VectorXd& forces) override;
     VectorXd get_joint_forces(const std::vector<std::string>& jointnames) override;
-
+    //----------------------------------------------------------------------------------------------------
 
 
     bool connect(const std::string& robot_definition);
