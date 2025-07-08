@@ -27,6 +27,7 @@ Contributors:
 #include <dqrobotics/interfaces/webots/DQ_WebotsInterface.h>
 #include <webots/Supervisor.hpp>
 #include <webots/PositionSensor.hpp>
+#include <webots/Motor.hpp>
 #include <unordered_map>
 
 class DQ_WebotsInterface::Impl
@@ -34,9 +35,15 @@ class DQ_WebotsInterface::Impl
 public:
     std::shared_ptr<webots::Supervisor> supervisor_;
     webots::Node* robot_node_;
+    int sampling_period_{32};
 
     std::unordered_map<std::string, webots::PositionSensor*> position_sensor_map_;
+    std::unordered_map<std::string, webots::Motor*> motor_sensor_map_;
 
+    Impl()
+    {
+
+    };
 
     /**
      * @brief _update_position_sensor_map updates the position_sensor_map map if the joint_sensor_name is not already there.
@@ -46,12 +53,11 @@ public:
      * @param sampling_period
      */
     void _update_position_sensor_map(const std::string& joint_sensor_name,
-                                     webots::PositionSensor* position_sensor,
-                                     const int& sampling_period = 32)
+                                     webots::PositionSensor* position_sensor)
     {
         auto rtn = position_sensor_map_.try_emplace(joint_sensor_name, position_sensor);
         if (std::get<1>(rtn)) // If the map is update, enable the position sensor.
-            position_sensor->enable(sampling_period);
+            position_sensor->enable(sampling_period_);
     }
 
 
@@ -61,16 +67,16 @@ public:
      * @param sampling_period
      * @return
      */
-    webots::PositionSensor* _get_position_sensor(const std::string& joint_sensor_name, const int& sampling_period = 32)
+    webots::PositionSensor* _get_position_sensor(const std::string& joint_sensor_name)
     {
         webots::PositionSensor *sensor = supervisor_->getPositionSensor(joint_sensor_name);
         std::string msg1 = "Joint sensor \""+joint_sensor_name+"\" not found in the current world file. \n";
         _check_pointer(sensor, msg1);
-        _update_position_sensor_map(joint_sensor_name, sensor, sampling_period);
+        _update_position_sensor_map(joint_sensor_name, sensor);
         return sensor;
     }
 
-    webots::PositionSensor* _get_position_sensor_from_map(const std::string& joint_sensor_name, const int& sampling_period = 32)
+    webots::PositionSensor* _get_position_sensor_from_map(const std::string& joint_sensor_name)
     {
         auto search = position_sensor_map_.find(joint_sensor_name);
         // returns a tuple <bool, int>
@@ -83,8 +89,14 @@ public:
         else
         {   // handle not found in map. Therefore, it is taken from Webots and the map
             // is updated;
-            return _get_position_sensor(joint_sensor_name, sampling_period);
+            return _get_position_sensor(joint_sensor_name);
         }
+    }
+
+    template <typename T>
+    T _get_element_from_map(const std::string& name)
+    {
+
     }
 
     template <typename T>
@@ -97,10 +109,11 @@ public:
 };
 
 DQ_WebotsInterface::DQ_WebotsInterface()
-    :robot_node_is_defined_{false}, sampling_period_{32}
+    :robot_node_is_defined_{false}
 {
     impl_ = std::make_shared<DQ_WebotsInterface::Impl>();
     impl_->supervisor_ = std::make_shared<webots::Supervisor>();
+    set_sampling_period(32); //Default
 
 }
 
@@ -181,7 +194,7 @@ VectorXd DQ_WebotsInterface::get_joint_positions(const std::vector<std::string> 
     const int n = jointnames.size();
     VectorXd joint_positions(n);
     for (int i=0;i<jointnames.size();i++)
-       joint_positions[i] =  impl_->_get_position_sensor_from_map(jointnames.at(i), sampling_period_)->getValue();
+       joint_positions[i] =  impl_->_get_position_sensor_from_map(jointnames.at(i))->getValue();
     return joint_positions;
 }
 
@@ -192,6 +205,7 @@ void DQ_WebotsInterface::set_joint_positions(const std::vector<std::string> &joi
 
 void DQ_WebotsInterface::set_joint_target_positions(const std::vector<std::string> &jointnames, const VectorXd &joint_target_positions)
 {
+    //webots::Motor* joint1 = supervisor->getMotor("shoulder_pan_joint");
     throw std::runtime_error("Unsupported!");
 }
 
@@ -251,4 +265,11 @@ bool DQ_WebotsInterface::connect(const std::string &robot_definition)
         return true;
     }
 
+}
+
+void DQ_WebotsInterface::set_sampling_period(const int &sampling_period)
+{
+    if (not impl_)
+        throw std::runtime_error("Bad call in DQ_WebotsInterface::set_sampling_period. Invalid pointer.");
+    impl_->sampling_period_ = sampling_period;
 }

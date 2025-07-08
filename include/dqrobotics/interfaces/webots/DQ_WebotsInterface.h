@@ -78,11 +78,11 @@ public:
 
 
     bool connect(const std::string& robot_definition);
+    void set_sampling_period(const int& sampling_period);
 
 protected:
     std::string robot_definition_;
     std::atomic<bool> robot_node_is_defined_;
-    int sampling_period_;
 private:
     class Impl;
     std::shared_ptr<Impl> impl_;
