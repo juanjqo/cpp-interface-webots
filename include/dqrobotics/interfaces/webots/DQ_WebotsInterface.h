@@ -83,6 +83,7 @@ public:
 protected:
     std::string robot_definition_;
     std::atomic<bool> robot_node_is_defined_;
+
 private:
     class Impl;
     std::shared_ptr<Impl> impl_;
