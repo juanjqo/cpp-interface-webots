@@ -79,6 +79,7 @@ public:
 
     bool connect(const std::string& robot_definition);
     void set_sampling_period(const int& sampling_period);
+    void reset_simulation() const;
 
 protected:
     std::string robot_definition_;
@@ -87,4 +88,6 @@ protected:
 private:
     class Impl;
     std::shared_ptr<Impl> impl_;
+    void _check_connection(const std::string& msg) const;
+
 };

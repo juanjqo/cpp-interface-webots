@@ -13,12 +13,13 @@ std::vector<std::string> jointnames = {"shoulder_pan_joint",
 int main() {
     DQ_WebotsInterface wb{};
     wb.connect("ur5");
+    wb.set_stepping_mode(true);
 
     std::vector<std::string> joint_sensors;
     for (auto& name : jointnames)
         joint_sensors.push_back(name+"_sensor");
 
-    VectorXd target = (VectorXd(6)<<-pi/2,0,0,0,0,0).finished();
+    VectorXd target = (VectorXd(6)<<-pi/2,-pi/2,0,0,0,0).finished();
 
     for(int i=0;i<100;i++)
     {
@@ -27,4 +28,5 @@ int main() {
         wb.set_joint_target_positions(jointnames, target);
         std::cout<<joint_positions.transpose()<<std::endl;
     }
+    wb.reset_simulation();
 }

@@ -32,7 +32,6 @@ Contributors:
 
 class DQ_WebotsInterface::Impl
 {
-
 protected:
     std::unordered_map<std::string, webots::PositionSensor*> position_sensor_map_;
     std::unordered_map<std::string, webots::Motor*> motor_sensor_map_;
@@ -172,13 +171,17 @@ bool DQ_WebotsInterface::connect(const std::string &host, const int &port, const
 
 void DQ_WebotsInterface::trigger_next_simulation_step() const
 {
-    impl_->check_pointer(impl_->supervisor_, "Bad call in DQ_WebotsInterface::trigger_next_simulation_step(): You must connect first!");
+    _check_connection("Bad call in DQ_WebotsInterface::trigger_next_simulation_step(). ");
     impl_->supervisor_->step(32);
 }
 
 void DQ_WebotsInterface::set_stepping_mode(const bool &flag) const
 {
-    throw std::runtime_error("Unsupported!");
+    _check_connection("Bad call in DQ_WebotsInterface::set_stepping_mode(). ");
+    auto att = impl_->robot_node_->getField("synchronization");
+    if (not att)
+        throw std::runtime_error("Not synchronization field found in the robot node!");
+    att->setSFBool(flag);
 }
 
 void DQ_WebotsInterface::start_simulation() const
@@ -314,7 +317,19 @@ bool DQ_WebotsInterface::connect(const std::string &robot_definition)
 
 void DQ_WebotsInterface::set_sampling_period(const int &sampling_period)
 {
-    if (not impl_)
-        throw std::runtime_error("Bad call in DQ_WebotsInterface::set_sampling_period. Invalid pointer.");
     impl_->sampling_period_ = sampling_period;
 }
+
+void DQ_WebotsInterface::reset_simulation() const
+{
+    _check_connection("Bad call in DQ_WebotsInterface::reset_simulation(). ");
+    impl_->supervisor_->simulationReset();
+}
+
+void DQ_WebotsInterface::_check_connection(const std::string &msg) const
+{
+    if (not robot_node_is_defined_)
+        throw std::runtime_error(msg+"\n You must connect first. \n");
+}
+
+
