@@ -24,9 +24,9 @@ int main() {
     for(int i=0;i<100;i++)
     {
         wb.trigger_next_simulation_step();
-        auto joint_positions = wb.get_joint_positions(joint_sensors);
         wb.set_joint_target_positions(jointnames, target);
-        std::cout<<joint_positions.transpose()<<std::endl;
+        std::cout<<wb.get_joint_positions(joint_sensors).transpose()<<std::endl;
+        std::cout<<wb.get_joint_velocities(jointnames).transpose()<<std::endl;
     }
     wb.reset_simulation();
 }

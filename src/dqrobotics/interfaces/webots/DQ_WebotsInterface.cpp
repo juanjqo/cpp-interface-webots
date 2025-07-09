@@ -238,7 +238,7 @@ VectorXd DQ_WebotsInterface::get_joint_positions(const std::vector<std::string> 
 {
     const int n = jointnames.size();
     VectorXd joint_positions(n);
-    for (int i=0;i<jointnames.size();i++)
+    for (int i=0;i<n;i++)
        joint_positions[i] = impl_->get_position_sensor_from_map(jointnames.at(i))->getValue();
     return joint_positions;
 }
@@ -259,7 +259,11 @@ void DQ_WebotsInterface::set_joint_target_positions(const std::vector<std::strin
 
 VectorXd DQ_WebotsInterface::get_joint_velocities(const std::vector<std::string> &jointnames)
 {
-    throw std::runtime_error("Unsupported!");
+    const int n = jointnames.size();
+    VectorXd joint_velocities(n);
+    for (int i=0;i<n;i++)
+        joint_velocities[i] = impl_->get_joint_motor_from_map(jointnames.at(i))->getVelocity();
+    return joint_velocities;
 }
 
 void DQ_WebotsInterface::set_joint_target_velocities(const std::vector<std::string> &jointnames, const VectorXd &joint_target_velocities)
