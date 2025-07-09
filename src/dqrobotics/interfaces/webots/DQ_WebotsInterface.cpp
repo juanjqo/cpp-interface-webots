@@ -252,7 +252,6 @@ void DQ_WebotsInterface::set_joint_target_positions(const std::vector<std::strin
 {
     impl_->check_sizes(jointnames, joint_target_positions,
                        "Bad call in DQ_WebotsInterface::set_joint_target_positions. jointnames and joint_target_positions have different sizes!");
-    const int n = jointnames.size();
     for (int i=0;i<jointnames.size();i++)
         impl_->get_joint_motor_from_map(jointnames.at(i))->setPosition(joint_target_positions[i]);
 }
