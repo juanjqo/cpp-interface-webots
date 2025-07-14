@@ -34,24 +34,24 @@ DQ_WebotsRobot::DQ_WebotsRobot(const std::shared_ptr<DQ_WebotsInterface> &webots
 
 }
 
-void DQ_WebotsRobot::set_joint_motor_names(const std::vector<std::string>& motor_names)
+void DQ_WebotsRobot::_set_joint_motor_names(const std::vector<std::string>& motor_names)
 {
     joint_motor_names_ = motor_names;
 }
 
-void DQ_WebotsRobot::set_joint_position_sensor_names(const std::vector<std::string> &position_sensor_names)
+void DQ_WebotsRobot::_set_joint_position_sensor_names(const std::vector<std::string> &position_sensor_names)
 {
     joint_position_sensor_names_ = position_sensor_names;
 }
 
-void DQ_WebotsRobot::set_joint_motor_and_position_sensor_names(const std::vector<std::string> &motor_names,
+void DQ_WebotsRobot::_set_joint_motor_and_position_sensor_names(const std::vector<std::string> &motor_names,
                                                                const std::string &sensor_suffix)
 {
-    set_joint_motor_names(motor_names);
+    _set_joint_motor_names(motor_names);
     std::vector<std::string> joint_sensors;
     joint_sensors.reserve(motor_names.size());
     for (auto& name : motor_names)
         joint_sensors.emplace_back(name+sensor_suffix);
-    set_joint_position_sensor_names(joint_sensors);
+    _set_joint_position_sensor_names(joint_sensors);
 }
 
