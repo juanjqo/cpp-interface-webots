@@ -18,18 +18,6 @@ TexturedBackgroundLight {
 RectangleArena {
 }
 DEF ur5 UR5e {
-  hidden translation_1 0 0 0.163
-  hidden rotation_1 0 0 -1 9.541538270729178e-05
-  hidden translation_2 0 0.138 0
-  hidden rotation_2 0 1 0 1.5708531774941055
-  hidden translation_3 0 -0.131 0.425
-  hidden rotation_3 0 1 0 1.5863544135755236e-05
-  hidden translation_4 0 0 0.392
-  hidden rotation_4 0 1 0 1.570789469712901
-  hidden translation_5 0 0.127 0
-  hidden rotation_5 0 0 0.9999999999999999 4.107966647175028e-07
-  hidden translation_6 0 0 0.1
-  hidden rotation_6 0 -1 0 4.1187628987685676e-07
   controller "<extern>"
   supervisor TRUE
 }

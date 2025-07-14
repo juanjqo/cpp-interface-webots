@@ -55,11 +55,9 @@ public:
     void     set_joint_target_positions(const std::vector<std::string>& jointnames,
                                     const VectorXd& joint_target_positions);
 
-    VectorXd get_joint_velocities(const std::vector<std::string>& jointnames);
+    //VectorXd get_joint_velocities(const std::vector<std::string>& jointnames);
 
 private:
-    std::string robot_definition_;
-    std::atomic<bool> robot_node_is_defined_;
 
     class Impl;
     std::shared_ptr<Impl> impl_;

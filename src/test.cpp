@@ -17,7 +17,7 @@ int main() {
 
     std::vector<std::string> joint_sensors;
     for (auto& name : jointnames)
-        joint_sensors.push_back(name+"_sensor");
+        joint_sensors.emplace_back(name+"_sensor");
 
     VectorXd target = (VectorXd(6)<<-pi/2,-pi/2,0,0,0,0).finished();
 

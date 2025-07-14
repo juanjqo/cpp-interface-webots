@@ -152,21 +152,36 @@ public:
 
 };
 
+
+/**
+ * @brief DQ_WebotsInterface::DQ_WebotsInterface constructor of the class.
+ * @param sampling_period The sampling period (default 32). This parameter corresponds to the duration of the control steps,
+ *                     i.e., the wb_robot_step function shall compute 32 milliseconds of simulation and then return.
+ *                     This duration specifies an amount of simulated time, not real (wall clock) time,
+ *                     so it may actually take 1 millisecond or one minute of real time, depending on
+ *                     the complexity of the simulated world.
+ */
 DQ_WebotsInterface::DQ_WebotsInterface(const int &sampling_period)
-    :robot_node_is_defined_{false}
 {
     impl_ = std::make_shared<DQ_WebotsInterface::Impl>(sampling_period);
     impl_->supervisor_ = std::make_shared<webots::Supervisor>();
 }
 
 
-
+/**
+ * @brief DQ_WebotsInterface::trigger_next_simulation_step performs a simulation step.
+ */
 void DQ_WebotsInterface::trigger_next_simulation_step() const
 {
     _check_connection(error_msg_layout_+std::string(__func__));
     impl_->supervisor_->step(get_sampling_period());
 }
 
+
+/**
+ * @brief DQ_WebotsInterface::set_stepping_mode
+ * @param flag
+ */
 void DQ_WebotsInterface::set_stepping_mode(const bool &flag) const
 {
     _check_connection(error_msg_layout_+std::string(__func__));
@@ -178,7 +193,11 @@ void DQ_WebotsInterface::set_stepping_mode(const bool &flag) const
 
 
 
-
+/**
+ * @brief DQ_WebotsInterface::get_joint_positions gets the joint positions from Webots.
+ * @param jointnames The name of the joint position sensors.
+ * @return The desired joint positions.
+ */
 VectorXd DQ_WebotsInterface::get_joint_positions(const std::vector<std::string> &jointnames)
 {
     const int n = jointnames.size();
@@ -188,7 +207,11 @@ VectorXd DQ_WebotsInterface::get_joint_positions(const std::vector<std::string> 
     return joint_positions;
 }
 
-
+/**
+ * @brief DQ_WebotsInterface::set_joint_target_positions sets the joint target positions on Webots.
+ * @param jointnames The name of the joint motors.
+ * @param joint_target_positions The desired joint target positions.
+ */
 void DQ_WebotsInterface::set_joint_target_positions(const std::vector<std::string> &jointnames, const VectorXd &joint_target_positions)
 {
     impl_->check_sizes(jointnames, joint_target_positions,
@@ -197,6 +220,7 @@ void DQ_WebotsInterface::set_joint_target_positions(const std::vector<std::strin
         impl_->get_joint_motor_from_map(jointnames.at(i))->setPosition(joint_target_positions[i]);
 }
 
+/*
 VectorXd DQ_WebotsInterface::get_joint_velocities(const std::vector<std::string> &jointnames)
 {
     const int n = jointnames.size();
@@ -205,6 +229,7 @@ VectorXd DQ_WebotsInterface::get_joint_velocities(const std::vector<std::string>
         joint_velocities[i] = impl_->get_joint_motor_from_map(jointnames.at(i))->getVelocity();
     return joint_velocities;
 }
+*/
 
 
 
@@ -216,43 +241,44 @@ VectorXd DQ_WebotsInterface::get_joint_velocities(const std::vector<std::string>
  */
 bool DQ_WebotsInterface::connect(const std::string &robot_definition)
 {
+    if (not impl_->robot_node_){
 
-    robot_definition_ = robot_definition;
-    if (not robot_node_is_defined_){
-
-        impl_->robot_node_ = impl_->supervisor_->getFromDef(robot_definition_);
+        impl_->robot_node_ = impl_->supervisor_->getFromDef(robot_definition);
 
 
-        std::string msg1 = "1. No DEF \""+robot_definition_+"\" node found in the current world file. \n";
+        std::string msg1 = "1. No DEF \""+robot_definition+"\" node found in the current world file. \n";
         std::string msg2 = "2. The robot controller is not set to <extern>. \n";
         std::string msg3 = "3. The supervisor is not set to TRUE. \n";
         std::string msg4 = "Save the scene, and open the world again. \n";
         impl_->check_pointer(impl_->robot_node_,
                              error_msg_layout_+std::string(__func__)+". Possible causes: \n"+msg1+msg2+msg3+msg4);
-
-        if (impl_->robot_node_)
-        {
-            robot_node_is_defined_ = true;
-            return true;
-        }
-        else
-        {
-            robot_node_is_defined_ = false;
-            return false;
-        }
-    }else{
-        return true;
     }
+    return impl_->robot_node_;
 
 }
 
 
-
+/**
+ * @brief DQ_WebotsInterface::set_sampling_period specifies the duration of the control steps, i.e., the wb_robot_step
+ *                     function shall compute 32 milliseconds of simulation and then return.
+ *                     This duration specifies an amount of simulated time, not real (wall clock) time,
+ *                     so it may actually take 1 millisecond or one minute of real time, depending on the complexity of
+ *                     the simulated world.
+ *
+ *                     check more in https://cyberbotics.com/doc/guide/controller-programming
+ *
+ * @param sampling_period The desired sampling period.
+ */
 void DQ_WebotsInterface::set_sampling_period(const int &sampling_period)
 {
     impl_->sampling_period_ = sampling_period;
 }
 
+
+/**
+ * @brief DQ_WebotsInterface::get_sampling_period
+ * @return
+ */
 int DQ_WebotsInterface::get_sampling_period() const
 {
     return impl_->sampling_period_;
@@ -266,7 +292,7 @@ void DQ_WebotsInterface::reset_simulation() const
 
 void DQ_WebotsInterface::_check_connection(const std::string &msg) const
 {
-    if (not robot_node_is_defined_)
+    if (not impl_->robot_node_)
         throw std::runtime_error(msg+"\n You must connect first. \n");
 }
 
