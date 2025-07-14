@@ -44,3 +44,14 @@ void DQ_WebotsRobot::set_joint_position_sensor_names(const std::vector<std::stri
     joint_position_sensor_names_ = position_sensor_names;
 }
 
+void DQ_WebotsRobot::set_joint_motor_and_position_sensor_names(const std::vector<std::string> &motor_names,
+                                                               const std::string &sensor_suffix)
+{
+    set_joint_motor_names(motor_names);
+    std::vector<std::string> joint_sensors;
+    joint_sensors.reserve(motor_names.size());
+    for (auto& name : motor_names)
+        joint_sensors.emplace_back(name+sensor_suffix);
+    set_joint_position_sensor_names(joint_sensors);
+}
+

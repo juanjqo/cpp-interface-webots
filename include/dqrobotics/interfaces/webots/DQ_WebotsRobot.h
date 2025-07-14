@@ -41,6 +41,8 @@ private:
 protected:
     void set_joint_motor_names(const std::vector<std::string>& motor_names);
     void set_joint_position_sensor_names(const std::vector<std::string>& position_sensor_names);
+    void set_joint_motor_and_position_sensor_names(const std::vector<std::string>& motor_names,
+                                                   const std::string& sensor_suffix="_sensor");
 
 public:
     DQ_WebotsRobot(const std::shared_ptr<DQ_WebotsInterface>& webots_interface);
