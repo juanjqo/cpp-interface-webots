@@ -35,6 +35,7 @@ class DQ_WebotsInterface::Impl
 protected:
     std::unordered_map<std::string, webots::PositionSensor*> position_sensor_map_;
     std::unordered_map<std::string, webots::Motor*> motor_sensor_map_;
+    std::unordered_map<std::string, webots::Node*> nodes_map_;
 
     /**
      * @brief _get_position_sensor gets the PositionSensor pointer given the name of the sensor.
@@ -66,6 +67,15 @@ protected:
         // Update the motor sensor map
         motor_sensor_map_.try_emplace(motor_name, motor);
         return motor;
+    }
+
+
+    webots::Node* _get_node(const std::string& objectname)
+    {
+        webots::Node* node = supervisor_->getFromDef(objectname);
+        check_pointer(node, "Object \""+objectname+"\" not found in the current world file. \n");
+        nodes_map_.try_emplace(objectname, node);
+        return node;
     }
 
     /**
@@ -122,6 +132,18 @@ public:
                              std::bind(&DQ_WebotsInterface::Impl::_get_position_sensor, this, std::placeholders::_1));
     }
 
+
+    /**
+     * @brief get_object_node_from_map
+     * @param objectname
+     * @return
+     */
+    webots::Node* get_object_node_from_map(const std::string& objectname)
+    {
+        return _get_element_from_map<webots::Node*>(objectname, nodes_map_,
+                                                     std::bind(&DQ_WebotsInterface::Impl::_get_node, this, std::placeholders::_1));
+    }
+
     /**
      * @brief check_sizes This method throws an exception with a desired message if
                            the sizes of v1 and v2 are different.
@@ -175,6 +197,44 @@ void DQ_WebotsInterface::trigger_next_simulation_step() const
 {
     _check_connection(error_msg_layout_+std::string(__func__));
     impl_->supervisor_->step(get_sampling_period());
+}
+
+
+/**
+ * @brief DQ_WebotsInterface::get_object_pose
+ * @param objectname
+ * @return
+ */
+DQ DQ_WebotsInterface::get_object_pose(const std::string &objectname)
+{
+    const DQ p = get_object_translation(objectname);
+    const DQ r = get_object_rotation(objectname);
+    return r+0.5*E_*p*r;
+}
+
+DQ DQ_WebotsInterface::get_object_translation(const std::string &objectname)
+{
+    webots::Field *trans_field = impl_->get_object_node_from_map(objectname)->getField("translation");
+    const double *t = trans_field->getSFVec3f();
+    const double x = t[0];
+    const double y = t[1];
+    const double z = t[2];
+    return  x*i_ + y*j_ + z*k_;
+}
+
+
+
+DQ DQ_WebotsInterface::get_object_rotation(const std::string &objectname)
+{
+    webots::Field *rot_field = impl_->get_object_node_from_map(objectname)->getField("rotation");
+    const double *rv = rot_field->getSFRotation();
+    const double x = rv[0];
+    const double y = rv[1];
+    const double z = rv[2];
+    const double angle = rv[3];
+
+    DQ n = (x*i_ + y*j_ + z*k_).normalize();
+    return cos(angle/2) + n*sin(angle/2);
 }
 
 
@@ -243,8 +303,8 @@ bool DQ_WebotsInterface::connect(const std::string &robot_definition)
 {
     if (not impl_->robot_node_){
 
-        impl_->robot_node_ = impl_->supervisor_->getFromDef(robot_definition);
-
+        //impl_->robot_node_ = impl_->supervisor_->getFromDef(robot_definition);
+        impl_->robot_node_ = impl_->get_object_node_from_map(robot_definition);
 
         std::string msg1 = "1. No DEF \""+robot_definition+"\" node found in the current world file. \n";
         std::string msg2 = "2. The robot controller is not set to <extern>. \n";
@@ -259,8 +319,8 @@ bool DQ_WebotsInterface::connect(const std::string &robot_definition)
 
 
 /**
- * @brief DQ_WebotsInterface::set_sampling_period specifies the duration of the control steps, i.e., the wb_robot_step
- *                     function shall compute 32 milliseconds of simulation and then return.
+ * @brief DQ_WebotsInterface::set_sampling_period specifies the duration of the control steps. For instance, if you use
+ *                     set_sampling_period(32), this function shall compute 32 milliseconds of simulation and then return.
  *                     This duration specifies an amount of simulated time, not real (wall clock) time,
  *                     so it may actually take 1 millisecond or one minute of real time, depending on the complexity of
  *                     the simulated world.

@@ -26,7 +26,9 @@ int main() {
         wb.trigger_next_simulation_step();
         wb.set_joint_target_positions(jointnames, target);
         std::cout<<wb.get_joint_positions(joint_sensors).transpose()<<std::endl;
-        std::cout<<wb.get_joint_velocities(jointnames).transpose()<<std::endl;
+        std::cout<<wb.get_object_pose("duck").translation()<<std::endl;
+        std::cout<<wb.get_object_pose("duck").rotation()<<std::endl;
+
     }
     wb.reset_simulation();
 }

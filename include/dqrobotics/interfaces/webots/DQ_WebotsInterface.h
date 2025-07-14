@@ -25,10 +25,7 @@ Contributors:
 */
 
 #pragma once
-
-#pragma once
 #include <dqrobotics/DQ.h>
-#include <atomic>
 #include <memory>
 
 using namespace DQ_robotics;
@@ -51,9 +48,15 @@ public:
     void set_stepping_mode(const bool& flag) const;
     void trigger_next_simulation_step() const;
 
+
+    DQ   get_object_translation(const std::string& objectname);
+    DQ   get_object_rotation   (const std::string& objectname);
+    DQ   get_object_pose       (const std::string& objectname);
+
     VectorXd get_joint_positions(const std::vector<std::string>& jointnames);
     void     set_joint_target_positions(const std::vector<std::string>& jointnames,
-                                    const VectorXd& joint_target_positions);
+                                        const VectorXd& joint_target_positions);
+
 
     //VectorXd get_joint_velocities(const std::vector<std::string>& jointnames);
 
