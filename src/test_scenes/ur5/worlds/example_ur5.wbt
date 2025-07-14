@@ -5,12 +5,13 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/RectangleArena.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/robots/universal_robots/protos/UR5e.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/toys/protos/RubberDuck.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/lights/protos/ConstructionLamp.proto"
 
 WorldInfo {
 }
 Viewpoint {
   orientation -0.2838907683708129 -0.09195800785515382 0.954436879225201 3.291145396717283
-  position 3.628960067534341 0.7160350186988277 2.4913445913936667
+  position 1.9275477399272896 0.5306332068107835 1.3566133789966077
 }
 TexturedBackground {
 }
@@ -19,34 +20,13 @@ TexturedBackgroundLight {
 RectangleArena {
 }
 DEF ur5 UR5e {
-  hidden translation_1 0 0 0.163
-  hidden rotation_1 0 0 -1 0.03963999241710988
-  hidden linearVelocity_1 -0.033605927393517886 0.004796268243931855 0.00034333980873070546
-  hidden angularVelocity_1 -9.778170048298048e-05 0.0014262398667752281 -1.2359264805966976
-  hidden translation_2 0 0.138 0
-  hidden rotation_2 0 1 0 1.5448847228377243
-  hidden linearVelocity_2 0.16794845601831962 -0.25534902970105905 0.17006691122670237
-  hidden angularVelocity_2 -4.129783038613261e-05 -0.8108569050246712 -1.2345393764894885
-  hidden translation_3 0 -0.131 0.425
-  hidden rotation_3 0 1 0 4.1504610625944334e-05
-  hidden linearVelocity_3 0.005995767294020525 -0.7012053323699059 0.46242856785718456
-  hidden angularVelocity_3 -0.00010461196173075428 -0.810412346283795 -1.2340191111748706
-  hidden translation_4 0 0 0.392
-  hidden rotation_4 0 1 0 1.5707930817601117
-  hidden linearVelocity_4 0.16249896892224616 -0.9989058078353976 0.6576712757731975
-  hidden angularVelocity_4 -0.0001699478134018358 -0.8103850390981019 -1.233988638537096
-  hidden translation_5 0 0.127 0
-  hidden rotation_5 0 0 -1 1.013717135888048e-06
-  hidden linearVelocity_5 0.24339742512142457 -0.9983853094132817 0.6571877096229662
-  hidden angularVelocity_5 -0.00012538975340890574 -0.8103708884236513 -1.2339844608412114
-  hidden translation_6 0 0 0.1
-  hidden rotation_6 0 -1 0 8.429369702178807e-08
-  hidden linearVelocity_6 0.33097245356199023 -0.9982798442225774 0.6570797513395376
-  hidden angularVelocity_6 -0.00013277694799652856 -0.8103700199800825 -1.2339816810738111
   controller "<extern>"
   supervisor TRUE
 }
 DEF duck RubberDuck {
   translation 7.25043e-05 0.4 0.0277771
   rotation 0.31377194266824276 -0.9494873076144301 -0.00458483078178282 0.00414293181204492
+}
+ConstructionLamp {
+  translation 0 -0.35 0.07
 }

@@ -49,9 +49,10 @@ public:
     void trigger_next_simulation_step() const;
 
 
-    DQ   get_object_translation(const std::string& objectname);
-    DQ   get_object_rotation   (const std::string& objectname);
-    DQ   get_object_pose       (const std::string& objectname);
+
+    DQ   get_object_pose(const std::string& objectname);
+    void set_object_pose(const std::string& objectname, const DQ& pose);
+
 
     VectorXd get_joint_positions(const std::vector<std::string>& jointnames);
     void     set_joint_target_positions(const std::vector<std::string>& jointnames,
@@ -60,11 +61,19 @@ public:
 
     //VectorXd get_joint_velocities(const std::vector<std::string>& jointnames);
 
+
+
+
 private:
 
     class Impl;
     std::shared_ptr<Impl> impl_;
     void _check_connection(const std::string& msg) const;
     std::string error_msg_layout_ = "Bad call in DQ_WebotsInterface::";
+
+    DQ     _get_object_translation(const std::string& objectname);
+    void   _set_object_translation(const std::string& objectname, const DQ& t);
+    DQ     _get_object_rotation   (const std::string& objectname);
+    void   _set_object_rotation   (const std::string& objectname, const DQ& r);
 
 };

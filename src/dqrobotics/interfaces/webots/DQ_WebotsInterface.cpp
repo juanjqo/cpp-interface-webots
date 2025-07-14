@@ -41,7 +41,7 @@ protected:
      * @brief _get_position_sensor gets the PositionSensor pointer given the name of the sensor.
      *                       The pointer is added to the position_sensor_map and the sensor is enabled.
      * @param sensor_name The name of the position sensor.
-     * @return The desired PositionSensor pointer.
+     * @return The desired PositionSensor pointer.v
      */
     webots::PositionSensor* _get_position_sensor(const std::string& sensor_name)
     {
@@ -56,9 +56,10 @@ protected:
     }
 
     /**
-     * @brief _get_joint_motor
-     * @param motor_name
-     * @return
+     * @brief _get_joint_motor gets the Motor pointer given the name of the motor. The pointer is added
+     *                      to the motor_sensor_map_.
+     * @param motor_name The name of the motor
+     * @return The desired Motor pointer.
      */
     webots::Motor* _get_joint_motor(const std::string& motor_name)
     {
@@ -70,6 +71,12 @@ protected:
     }
 
 
+    /**
+     * @brief _get_node gets the Node pointer given the name of the object. The pointer is added
+     *                      to the nodes_map_.
+     * @param motor_name The name of the object.
+     * @return The desired Node pointer.
+     */
     webots::Node* _get_node(const std::string& objectname)
     {
         webots::Node* node = supervisor_->getFromDef(objectname);
@@ -79,11 +86,12 @@ protected:
     }
 
     /**
-     * @brief _get_element_from_map
-     * @param name
-     * @param map
-     * @param map_type
-     * @return
+     * @brief _get_element_from_map gets the element from the specified map. If the element is not found,
+     *                  This method calls the specified function.
+     * @param name The name of the element.
+     * @param map The map used to store the specific type of elements.
+     * @param f The function to be call if the element is not found in the map
+     * @return The desired T-type pointer
      */
     template <typename T, typename M>
     T _get_element_from_map(const std::string& name, M& map, const std::function<T(const std::string& name)>& f)
@@ -201,21 +209,80 @@ void DQ_WebotsInterface::trigger_next_simulation_step() const
 
 
 /**
- * @brief DQ_WebotsInterface::get_object_pose
- * @param objectname
- * @return
+ * @brief DQ_WebotsInterface::get_object_pose returns a unit dual quaternion that represents
+ *        the object pose in the Webots scene with respect to the absolute frame.
+ * @param objectname The name of the object in the Webots scene.
+ * @return the desired object pose
  */
 DQ DQ_WebotsInterface::get_object_pose(const std::string &objectname)
 {
-    const DQ p = get_object_translation(objectname);
-    const DQ r = get_object_rotation(objectname);
+    const DQ p = _get_object_translation(objectname);
+    const DQ r = _get_object_rotation(objectname);
     return r+0.5*E_*p*r;
 }
 
-DQ DQ_WebotsInterface::get_object_translation(const std::string &objectname)
+
+/**
+ * @brief DQ_WebotsInterface::set_object_pose sets the pose of an object in the Webots scene.
+ * @param objectname The name of the object in the Webots scene.
+ * @param Pose A unit dual qualternion that represents the desired object pose with respect to the absolute frame.
+ */
+void DQ_WebotsInterface::set_object_pose(const std::string &objectname, const DQ &pose)
 {
-    webots::Field *trans_field = impl_->get_object_node_from_map(objectname)->getField("translation");
-    const double *t = trans_field->getSFVec3f();
+    if (!is_unit(pose))
+        throw std::runtime_error(error_msg_layout_+std::string(__func__)+". The pose must be a unit dual quaternion!");
+    const DQ t = pose.translation();
+    const DQ r = pose.rotation();
+    _set_object_rotation(objectname, r);
+    _set_object_translation(objectname, t);
+}
+
+
+/**
+ * @brief DQ_WebotsInterface::_set_object_translation sets the translation of an object
+ *        in the Webots scene.
+ * @param objectname the name of the object
+ * @param t The pure quaternion that represents the desired position with respect to the absolute frame.
+ */
+void DQ_WebotsInterface::_set_object_translation(const std::string &objectname, const DQ &t)
+{
+    webots::Field* translation_field= impl_->get_object_node_from_map(objectname)->getField("translation");
+    VectorXd vec_t = t.vec3();
+    const double values[3] = {vec_t(0),vec_t(1),vec_t(2)};
+    translation_field->setSFVec3f(values);
+
+}
+
+
+/**
+ * @brief DQ_WebotsInterface::_set_object_rotation sets the rotation of an object in the Webots scene.
+ * @param objectname the name of the object
+ * @param r A unit quaternion that represents the desired rotation with respect to the absolute frame.
+ */
+void DQ_WebotsInterface::_set_object_rotation(const std::string &objectname, const DQ &r)
+{
+    webots::Field *rotation_field = impl_->get_object_node_from_map(objectname)->getField("rotation");
+    const VectorXd vec_r = r.vec4();
+    const VectorXd axis = r.rotation_axis().vec3();
+    const double angle = r.rotation_angle();
+    const double x = axis[0];
+    const double y = axis[1];
+    const double z = axis[2];
+    const double values[4] = {x,y,z, angle};
+    rotation_field->setSFRotation(values);
+}
+
+
+/**
+ * @brief DQ_WebotsInterface::_get_object_translation returns a pure quaternion that represents the position
+ *        of an object in the Webots scene with respect to the absolute frame.
+ * @param objectname The name of the object.
+ * @return The translation of the object.
+ */
+DQ DQ_WebotsInterface::_get_object_translation(const std::string &objectname)
+{
+    webots::Field* translation_field = impl_->get_object_node_from_map(objectname)->getField("translation");
+    const double* t = translation_field->getSFVec3f();
     const double x = t[0];
     const double y = t[1];
     const double z = t[2];
@@ -223,11 +290,16 @@ DQ DQ_WebotsInterface::get_object_translation(const std::string &objectname)
 }
 
 
-
-DQ DQ_WebotsInterface::get_object_rotation(const std::string &objectname)
+/**
+ * @brief DQ_WebotsInterface::_get_object_rotation returns a unit quaternion that represents the rotation
+ *        of an object in the Webots scene with respect to the absolute frame.
+ * @param objectname the name of the object.
+ * @return The object rotation
+ */
+DQ DQ_WebotsInterface::_get_object_rotation(const std::string &objectname)
 {
-    webots::Field *rot_field = impl_->get_object_node_from_map(objectname)->getField("rotation");
-    const double *rv = rot_field->getSFRotation();
+    webots::Field *rotation_field = impl_->get_object_node_from_map(objectname)->getField("rotation");
+    const double *rv = rotation_field->getSFRotation();
     const double x = rv[0];
     const double y = rv[1];
     const double z = rv[2];
@@ -336,20 +408,31 @@ void DQ_WebotsInterface::set_sampling_period(const int &sampling_period)
 
 
 /**
- * @brief DQ_WebotsInterface::get_sampling_period
- * @return
+ * @brief DQ_WebotsInterface::get_sampling_period gets the sampling period. This value correspond to the duration of the control steps.
+ * @return The sampling period.
  */
 int DQ_WebotsInterface::get_sampling_period() const
 {
     return impl_->sampling_period_;
 }
 
+
+/**
+ * @brief DQ_WebotsInterface::reset_simulation sends a request to the simulator process, asking it to reset the simulation at the end of the step.
+ *
+ *   Source: https://cyberbotics.com/doc/reference/supervisor?tab-language=c++#wb_supervisor_simulation_reset
+ */
 void DQ_WebotsInterface::reset_simulation() const
 {
     _check_connection(error_msg_layout_+std::string(__func__));
     impl_->supervisor_->simulationReset();
 }
 
+
+/**
+ * @brief DQ_WebotsInterface::_check_connection throws an exception if the robot node is not valid.
+ * @param msg The error message that you want to display to the user.
+ */
 void DQ_WebotsInterface::_check_connection(const std::string &msg) const
 {
     if (not impl_->robot_node_)
