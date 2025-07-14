@@ -28,7 +28,6 @@ Contributors:
 
 #pragma once
 #include <dqrobotics/DQ.h>
-#include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterface.h>
 #include <atomic>
 #include <memory>
 
@@ -36,58 +35,35 @@ using namespace DQ_robotics;
 using namespace Eigen;
 
 
-class DQ_WebotsInterface: public DQ_CoppeliaSimInterface
+class DQ_WebotsInterface
 {
 public:
-    DQ_WebotsInterface();
+    DQ_WebotsInterface(const int& sampling_period = 32);
     virtual ~DQ_WebotsInterface() = default;
-
-    //-----Concrete methods from DQ_CoppeliaSimInterface---------------------------------------------
-    bool connect(const std::string& host, const int& port, const int&TIMEOUT_IN_MILISECONDS) override;
-    void trigger_next_simulation_step() const override;
-    void set_stepping_mode(const bool& flag) const override;
-    void start_simulation() const override;
-    void stop_simulation()  const override;
-
-    int get_object_handle(const std::string& objectname) override;
-    std::vector<int> get_object_handles(const std::vector<std::string>& objectnames) override;
-
-    DQ   get_object_translation(const std::string& objectname) override;
-    void set_object_translation(const std::string& objectname, const DQ& t) override;
-
-    DQ   get_object_rotation   (const std::string& objectname) override;
-    void set_object_rotation   (const std::string& objectname, const DQ& r) override;
-
-    DQ   get_object_pose       (const std::string& objectname) override;
-    void set_object_pose       (const std::string& objectname, const DQ& h) override;
-
-    VectorXd get_joint_positions(const std::vector<std::string>& jointnames) override;
-    void     set_joint_positions(const std::vector<std::string>& jointnames,
-                                 const VectorXd& joint_positions) override;
-    void     set_joint_target_positions(const std::vector<std::string>& jointnames,
-                                        const VectorXd& joint_target_positions) override;
-
-    VectorXd get_joint_velocities(const std::vector<std::string>& jointnames) override;
-    void     set_joint_target_velocities(const std::vector<std::string>& jointnames,
-                                         const VectorXd& joint_target_velocities) override;
-
-    void     set_joint_target_forces(const std::vector<std::string>& jointnames,
-                                     const VectorXd& forces) override;
-    VectorXd get_joint_forces(const std::vector<std::string>& jointnames) override;
-    //----------------------------------------------------------------------------------------------------
 
 
     bool connect(const std::string& robot_definition);
-    void set_sampling_period(const int& sampling_period);
-    void reset_simulation() const;
 
-protected:
+    void set_sampling_period(const int& sampling_period);
+    int  get_sampling_period() const;
+
+    void reset_simulation() const;
+    void set_stepping_mode(const bool& flag) const;
+    void trigger_next_simulation_step() const;
+
+    VectorXd get_joint_positions(const std::vector<std::string>& jointnames);
+    void     set_joint_target_positions(const std::vector<std::string>& jointnames,
+                                    const VectorXd& joint_target_positions);
+
+    VectorXd get_joint_velocities(const std::vector<std::string>& jointnames);
+
+private:
     std::string robot_definition_;
     std::atomic<bool> robot_node_is_defined_;
 
-private:
     class Impl;
     std::shared_ptr<Impl> impl_;
     void _check_connection(const std::string& msg) const;
+    std::string error_msg_layout_ = "Bad call in DQ_WebotsInterface::";
 
 };

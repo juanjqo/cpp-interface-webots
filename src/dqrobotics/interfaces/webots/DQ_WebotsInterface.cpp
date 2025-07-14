@@ -89,12 +89,15 @@ protected:
 public:
     std::shared_ptr<webots::Supervisor> supervisor_;
     webots::Node* robot_node_;
-    int sampling_period_{32};
+    int sampling_period_;
 
-    Impl()
+    Impl(const int& sampling_period)
+        :sampling_period_{sampling_period}
     {
 
     };
+
+    Impl() = delete;
 
 
     /**
@@ -128,8 +131,8 @@ public:
      */
     template <typename T, typename U>
     void check_sizes(const T &v1,
-                      const U &v2,
-                      const std::string& error_message) const
+                     const U &v2,
+                     const std::string& error_message) const
     {
         if (static_cast<std::size_t>(v1.size()) != static_cast<std::size_t>(v2.size()))
             throw std::runtime_error(error_message);
@@ -149,85 +152,32 @@ public:
 
 };
 
-DQ_WebotsInterface::DQ_WebotsInterface()
+DQ_WebotsInterface::DQ_WebotsInterface(const int &sampling_period)
     :robot_node_is_defined_{false}
 {
-    impl_ = std::make_shared<DQ_WebotsInterface::Impl>();
+    impl_ = std::make_shared<DQ_WebotsInterface::Impl>(sampling_period);
     impl_->supervisor_ = std::make_shared<webots::Supervisor>();
-    set_sampling_period(32); //Default
-
 }
 
 
-bool DQ_WebotsInterface::connect(const std::string &host, const int &port, const int &TIMEOUT_IN_MILISECONDS)
-{
-    throw std::runtime_error("Unsupported!");
-}
 
 void DQ_WebotsInterface::trigger_next_simulation_step() const
 {
-    _check_connection("Bad call in DQ_WebotsInterface::trigger_next_simulation_step(). ");
-    impl_->supervisor_->step(32);
+    _check_connection(error_msg_layout_+std::string(__func__));
+    impl_->supervisor_->step(get_sampling_period());
 }
 
 void DQ_WebotsInterface::set_stepping_mode(const bool &flag) const
 {
-    _check_connection("Bad call in DQ_WebotsInterface::set_stepping_mode(). ");
+    _check_connection(error_msg_layout_+std::string(__func__));
     auto att = impl_->robot_node_->getField("synchronization");
     if (not att)
         throw std::runtime_error("Not synchronization field found in the robot node!");
     att->setSFBool(flag);
 }
 
-void DQ_WebotsInterface::start_simulation() const
-{
-    throw std::runtime_error("Unsupported!");
-}
 
-void DQ_WebotsInterface::stop_simulation() const
-{
-    throw std::runtime_error("Unsupported!");
-}
 
-int DQ_WebotsInterface::get_object_handle(const std::string &objectname)
-{
-    throw std::runtime_error("Unsupported!");
-}
-
-std::vector<int> DQ_WebotsInterface::get_object_handles(const std::vector<std::string> &objectnames)
-{
-    throw std::runtime_error("Unsupported!");
-}
-
-DQ DQ_WebotsInterface::get_object_translation(const std::string &objectname)
-{
-    throw std::runtime_error("Unsupported!");
-}
-
-void DQ_WebotsInterface::set_object_translation(const std::string &objectname, const DQ &t)
-{
-    throw std::runtime_error("Unsupported!");
-}
-
-DQ DQ_WebotsInterface::get_object_rotation(const std::string &objectname)
-{
-    throw std::runtime_error("Unsupported!");
-}
-
-void DQ_WebotsInterface::set_object_rotation(const std::string &objectname, const DQ &r)
-{
-    throw std::runtime_error("Unsupported!");
-}
-
-DQ DQ_WebotsInterface::get_object_pose(const std::string &objectname)
-{
-    throw std::runtime_error("Unsupported!");
-}
-
-void DQ_WebotsInterface::set_object_pose(const std::string &objectname, const DQ &h)
-{
-    throw std::runtime_error("Unsupported!");
-}
 
 VectorXd DQ_WebotsInterface::get_joint_positions(const std::vector<std::string> &jointnames)
 {
@@ -238,15 +188,11 @@ VectorXd DQ_WebotsInterface::get_joint_positions(const std::vector<std::string> 
     return joint_positions;
 }
 
-void DQ_WebotsInterface::set_joint_positions(const std::vector<std::string> &jointnames, const VectorXd &joint_positions)
-{
-    throw std::runtime_error("Unsupported!");
-}
 
 void DQ_WebotsInterface::set_joint_target_positions(const std::vector<std::string> &jointnames, const VectorXd &joint_target_positions)
 {
     impl_->check_sizes(jointnames, joint_target_positions,
-                       "Bad call in DQ_WebotsInterface::set_joint_target_positions. jointnames and joint_target_positions have different sizes!");
+                       error_msg_layout_+std::string(__func__)+": arguments have different sizes!");
     for (int i=0;i<jointnames.size();i++)
         impl_->get_joint_motor_from_map(jointnames.at(i))->setPosition(joint_target_positions[i]);
 }
@@ -260,27 +206,13 @@ VectorXd DQ_WebotsInterface::get_joint_velocities(const std::vector<std::string>
     return joint_velocities;
 }
 
-void DQ_WebotsInterface::set_joint_target_velocities(const std::vector<std::string> &jointnames, const VectorXd &joint_target_velocities)
-{
-    throw std::runtime_error("Unsupported!");
-}
-
-void DQ_WebotsInterface::set_joint_target_forces(const std::vector<std::string> &jointnames, const VectorXd &forces)
-{
-    throw std::runtime_error("Unsupported!");
-}
-
-VectorXd DQ_WebotsInterface::get_joint_forces(const std::vector<std::string> &jointnames)
-{
-    throw std::runtime_error("Unsupported!");
-}
-
 
 
 /**
- * @brief DQ_WebotsInterface::connect
- * @param robot_definition
- * @return
+ * @brief DQ_WebotsInterface::connect This method connects with a robot node element on Webots. The robot node must have
+ *                          a DEF tag defined, a controller attribute set on "<extern>", and a supervisor attribute set on TRUE.
+ * @param robot_definition The DEF tag defined on the Webots robot node.
+ * @return True if the connection is ok. False otherwise.
  */
 bool DQ_WebotsInterface::connect(const std::string &robot_definition)
 {
@@ -295,7 +227,8 @@ bool DQ_WebotsInterface::connect(const std::string &robot_definition)
         std::string msg2 = "2. The robot controller is not set to <extern>. \n";
         std::string msg3 = "3. The supervisor is not set to TRUE. \n";
         std::string msg4 = "Save the scene, and open the world again. \n";
-        impl_->check_pointer(impl_->robot_node_,"Error in DQ_WebotsInterface::connect(). Possible causes: \n"+msg1+msg2+msg3+msg4);
+        impl_->check_pointer(impl_->robot_node_,
+                             error_msg_layout_+std::string(__func__)+". Possible causes: \n"+msg1+msg2+msg3+msg4);
 
         if (impl_->robot_node_)
         {
@@ -313,14 +246,21 @@ bool DQ_WebotsInterface::connect(const std::string &robot_definition)
 
 }
 
+
+
 void DQ_WebotsInterface::set_sampling_period(const int &sampling_period)
 {
     impl_->sampling_period_ = sampling_period;
 }
 
+int DQ_WebotsInterface::get_sampling_period() const
+{
+    return impl_->sampling_period_;
+}
+
 void DQ_WebotsInterface::reset_simulation() const
 {
-    _check_connection("Bad call in DQ_WebotsInterface::reset_simulation(). ");
+    _check_connection(error_msg_layout_+std::string(__func__));
     impl_->supervisor_->simulationReset();
 }
 

@@ -8,8 +8,8 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 WorldInfo {
 }
 Viewpoint {
-  orientation -0.2937332176484131 0.32143634847947067 0.9002219008256209 1.585791773236945
-  position -0.2954439965552074 -3.609958225412306 2.698552172345485
+  orientation -0.323240460456713 0.24985006398930146 0.912737941716172 1.5989324426719824
+  position 0.3926429146224044 -3.544081447345108 3.0170464397105206
 }
 TexturedBackground {
 }
@@ -18,17 +18,17 @@ TexturedBackgroundLight {
 RectangleArena {
 }
 DEF ur5 UR5e {
-  hidden position_0_0 -9.541538121825394e-05
+  hidden translation_1 0 0 0.163
   hidden rotation_1 0 0 -1 9.541538270729178e-05
-  hidden position_1_0 5.7177494105396136e-05
+  hidden translation_2 0 0.138 0
   hidden rotation_2 0 1 0 1.5708531774941055
-  hidden position_2_0 1.5863537579585197e-05
+  hidden translation_3 0 -0.131 0.425
   hidden rotation_3 0 1 0 1.5863544135755236e-05
-  hidden position_3_0 -6.530287099134536e-06
+  hidden translation_4 0 0 0.392
   hidden rotation_4 0 1 0 1.570789469712901
-  hidden position_4_0 4.110136926244881e-07
+  hidden translation_5 0 0.127 0
   hidden rotation_5 0 0 0.9999999999999999 4.107966647175028e-07
-  hidden position_5_0 -4.1141856854665093e-07
+  hidden translation_6 0 0 0.1
   hidden rotation_6 0 -1 0 4.1187628987685676e-07
   controller "<extern>"
   supervisor TRUE
