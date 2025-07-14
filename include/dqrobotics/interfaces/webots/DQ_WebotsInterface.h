@@ -40,7 +40,7 @@ class DQ_WebotsInterface: public DQ_CoppeliaSimInterface
 {
 public:
     DQ_WebotsInterface();
-    ~DQ_WebotsInterface();
+    virtual ~DQ_WebotsInterface() = default;
 
     //-----Concrete methods from DQ_CoppeliaSimInterface---------------------------------------------
     bool connect(const std::string& host, const int& port, const int&TIMEOUT_IN_MILISECONDS) override;

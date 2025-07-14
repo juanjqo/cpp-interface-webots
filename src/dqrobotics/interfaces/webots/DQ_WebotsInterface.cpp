@@ -158,11 +158,6 @@ DQ_WebotsInterface::DQ_WebotsInterface()
 
 }
 
-DQ_WebotsInterface::~DQ_WebotsInterface()
-{
-
-}
-
 
 bool DQ_WebotsInterface::connect(const std::string &host, const int &port, const int &TIMEOUT_IN_MILISECONDS)
 {
