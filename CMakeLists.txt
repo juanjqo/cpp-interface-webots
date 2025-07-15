@@ -67,8 +67,8 @@ if(UNIX AND NOT APPLE)
 endif()
 if(WIN32)
     target_link_libraries(${PROJECT_NAME}
-            cppzmq
             dqrobotics
+            Eigen3::Eigen
             ${WEBOT_LIBRARIES}
     )
 endif()
@@ -107,7 +107,6 @@ INSTALL(FILES
 # Robots
 INSTALL(FILES
      include/dqrobotics/interfaces/webots/robots/URXWebotsRobot.h
-#    include/dqrobotics/interfaces/coppeliasim/robots/URXCoppeliaSimZMQRobot.h
     DESTINATION "include/dqrobotics/interfaces/coppeliasim/robots")
 
 ################################################################
@@ -125,12 +124,4 @@ INSTALL(FILES
 INSTALL(FILES
         src/dqrobotics/interfaces/webots/robots/URXWebotsRobot.cpp
     DESTINATION "src/dqrobotics/interfaces/webots/robots")
-
-#include_directories(include)
-
-#add_executable(test src/test.cpp)
-#target_link_libraries(test
-#dqrobotics
-#dqrobotics-interface-webots
-#)
 
