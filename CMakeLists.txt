@@ -19,7 +19,6 @@ if (UNIX AND NOT APPLE)
 endif()
 
 if (APPLE)
-    find_package(cppzmq REQUIRED)
     set(WEBOTS_HOME /Applications/Webots.app/Contents/)
 
     # The DQ Robotics library is installed in /usr/local/include/ on macOS platforms.
@@ -107,7 +106,7 @@ INSTALL(FILES
 # Robots
 INSTALL(FILES
     include/dqrobotics/interfaces/webots/robots/URXWebotsRobot.h
-    DESTINATION "include/dqrobotics/interfaces/webots/robots")
+    DESTINATION "include/dqrobotics/interfaces/webots/crobots")
 
 ################################################################
 # INSTALL SOURCE FILES (So that the debugger can find them)
