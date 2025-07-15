@@ -39,13 +39,21 @@ add_library(${PROJECT_NAME}
     src/dqrobotics/interfaces/webots/DQ_WebotsInterface.cpp
     src/dqrobotics/interfaces/webots/DQ_WebotsRobot.cpp
     src/dqrobotics/interfaces/webots/robots/URXWebotsRobot.cpp
+
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE
         include
         ${WEBOTS_HOME}/include/controller/c
         ${WEBOTS_HOME}/include/controller/cpp
+        #$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        #$<BUILD_INTERFACE:${WEBOTS_HOME}/include/controller/c>
+        #$<BUILD_INTERFACE:${WEBOTS_HOME}/include/controller/cpp>
 )
+
+#target_link_directories(${PROJECT_NAME} PRIVATE
+#    ${WEBOTS_HOME}/lib/controller
+#)
 
 set(WEBOT_LIBRARIES m ${CMAKE_SHARED_LIBRARY_PREFIX}Controller${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_SHARED_LIBRARY_PREFIX}CppController${CMAKE_SHARED_LIBRARY_SUFFIX})
 

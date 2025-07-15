@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Eigen3 REQUIRED)
 if (APPLE)
+    set(WEBOTS_HOME /Applications/Webots.app/Contents/)
     INCLUDE_DIRECTORIES(
            /usr/local/include/
            /usr/local/include/eigen3
@@ -21,7 +22,7 @@ if (APPLE)
    LINK_DIRECTORIES(
        /usr/local/lib/
        /opt/homebrew/lib
-       )
+       ${WEBOTS_HOME}/lib/controller)
 endif()
 
 
