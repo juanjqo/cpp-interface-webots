@@ -34,24 +34,49 @@ DQ_WebotsRobot::DQ_WebotsRobot(const std::shared_ptr<DQ_WebotsInterface> &webots
 
 }
 
-void DQ_WebotsRobot::_set_joint_motor_names(const std::vector<std::string>& motor_names)
+DQ_WebotsRobot::DQ_WebotsRobot(const std::shared_ptr<DQ_WebotsInterface> &webots_interface,
+                               const std::vector<std::string> &joint_motor_names,
+                               const std::vector<std::string> &joint_position_sensor_names)
+    :wb_{webots_interface},
+    joint_motor_names_{joint_motor_names},
+    joint_position_sensor_names_{joint_motor_names}
+{
+
+}
+
+void DQ_WebotsRobot::set_target_configuration(const VectorXd &target_configuration)
+{
+    _get_interface_sptr()->set_joint_target_positions(joint_motor_names_, target_configuration);
+}
+
+VectorXd DQ_WebotsRobot::get_configuration()
+{
+    return _get_interface_sptr()->get_joint_positions(joint_position_sensor_names_);
+}
+
+void DQ_WebotsRobot::set_joint_motor_names(const std::vector<std::string>& motor_names)
 {
     joint_motor_names_ = motor_names;
 }
 
-void DQ_WebotsRobot::_set_joint_position_sensor_names(const std::vector<std::string> &position_sensor_names)
+void DQ_WebotsRobot::set_joint_position_sensor_names(const std::vector<std::string> &position_sensor_names)
 {
     joint_position_sensor_names_ = position_sensor_names;
 }
 
-void DQ_WebotsRobot::_set_joint_motor_and_position_sensor_names(const std::vector<std::string> &motor_names,
+void DQ_WebotsRobot::set_joint_motor_and_position_sensor_names(const std::vector<std::string> &motor_names,
                                                                const std::string &sensor_suffix)
 {
-    _set_joint_motor_names(motor_names);
+    set_joint_motor_names(motor_names);
     std::vector<std::string> joint_sensors;
     joint_sensors.reserve(motor_names.size());
     for (auto& name : motor_names)
         joint_sensors.emplace_back(name+sensor_suffix);
-    _set_joint_position_sensor_names(joint_sensors);
+    set_joint_position_sensor_names(joint_sensors);
+}
+
+std::shared_ptr<DQ_WebotsInterface> DQ_WebotsRobot::_get_interface_sptr() const
+{
+    return wb_;
 }
 

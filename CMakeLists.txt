@@ -39,6 +39,7 @@ endif ()
 add_library(${PROJECT_NAME} 
     src/dqrobotics/interfaces/webots/DQ_WebotsInterface.cpp
     src/dqrobotics/interfaces/webots/DQ_WebotsRobot.cpp
+    src/dqrobotics/interfaces/webots/robots/URXWebotsRobot.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE
@@ -73,10 +74,12 @@ if(WIN32)
 endif()
 
 
-include_directories(include)
-add_executable(test src/test.cpp)
-target_link_libraries(test
-dqrobotics
-dqrobotics-interface-webots
-)
+
+#include_directories(include)
+
+#add_executable(test src/test.cpp)
+#target_link_libraries(test
+#dqrobotics
+#dqrobotics-interface-webots
+#)
 

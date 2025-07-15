@@ -61,15 +61,17 @@ public:
 
     //VectorXd get_joint_velocities(const std::vector<std::string>& jointnames);
 
+    void test_proto(const std::string& DEF);
 
 
-
+    std::string get_robot_name() const;
 private:
 
     class Impl;
     std::shared_ptr<Impl> impl_;
     void _check_connection(const std::string& msg) const;
     std::string error_msg_layout_ = "Bad call in DQ_WebotsInterface::";
+    std::string DEF_;
 
     DQ     _get_object_translation(const std::string& objectname);
     void   _set_object_translation(const std::string& objectname, const DQ& t);

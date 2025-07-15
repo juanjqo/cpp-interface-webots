@@ -352,6 +352,17 @@ void DQ_WebotsInterface::set_joint_target_positions(const std::vector<std::strin
         impl_->get_joint_motor_from_map(jointnames.at(i))->setPosition(joint_target_positions[i]);
 }
 
+void DQ_WebotsInterface::test_proto(const std::string &DEF)
+{
+    ///auto node = impl_->supervisor_->get
+}
+
+std::string DQ_WebotsInterface::get_robot_name() const
+{
+    return DEF_;
+}
+
+
 /*
 VectorXd DQ_WebotsInterface::get_joint_velocities(const std::vector<std::string> &jointnames)
 {
@@ -385,6 +396,7 @@ bool DQ_WebotsInterface::connect(const std::string &robot_definition)
         impl_->check_pointer(impl_->robot_node_,
                              error_msg_layout_+std::string(__func__)+". Possible causes: \n"+msg1+msg2+msg3+msg4);
     }
+    DEF_ = robot_definition;
     return impl_->robot_node_;
 
 }

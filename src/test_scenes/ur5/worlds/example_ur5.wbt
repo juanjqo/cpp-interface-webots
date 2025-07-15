@@ -3,30 +3,29 @@
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/RectangleArena.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/robots/universal_robots/protos/UR5e.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/toys/protos/RubberDuck.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/lights/protos/ConstructionLamp.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/robots/universal_robots/protos/UR3e.proto"
 
 WorldInfo {
 }
 Viewpoint {
-  orientation -0.2838907683708129 -0.09195800785515382 0.954436879225201 3.291145396717283
-  position 1.9275477399272896 0.5306332068107835 1.3566133789966077
+  orientation -0.44638233075308026 0.09585300867996516 0.889693776261499 2.4536729201085166
+  position 1.5653075573158406 -1.4237301017706 2.42124404272466
+  followType "None"
 }
 TexturedBackground {
 }
 TexturedBackgroundLight {
 }
 RectangleArena {
+  floorSize 2 2
 }
-DEF ur5 UR5e {
-  controller "<extern>"
-  supervisor TRUE
-}
-DEF duck RubberDuck {
-  translation 7.25043e-05 0.4 0.0277771
-  rotation 0.31377194266824276 -0.9494873076144301 -0.00458483078178282 0.00414293181204492
+DEF ref Pose {
 }
 ConstructionLamp {
   translation 0 -0.35 0.07
+}
+DEF ur3 UR3e {
+  controller "<extern>"
+  supervisor TRUE
 }
