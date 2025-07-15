@@ -11,3 +11,15 @@
 |    | Ubuntu LTS ![Static Badge](https://img.shields.io/badge/x64-blue) ![Static Badge](https://img.shields.io/badge/arm64-blue)  |  ![Static Badge](https://img.shields.io/badge/beta-yellow)|
 |   | Windows 11 ![Static Badge](https://img.shields.io/badge/x64-blue) ![Static Badge](https://img.shields.io/badge/arm64-blue)   |  ![Static Badge](https://img.shields.io/badge/unsupported-gray) | 
 
+
+### Install (UNIX)
+
+```shell
+cd ~/Downloads/ && git clone https://github.com/juanjqo/cpp-interface-webots
+cd ~/Downloads/cpp-interface-webots
+mkdir build && cd build
+cmake ..
+make
+sudo make install
+```
+
