@@ -23,3 +23,71 @@ make
 sudo make install
 ```
 
+### Example
+
+1. Open the [ur3.wbt](https://github.com/juanjqo/cpp-interface-webots/blob/main/examples/ur3/webots_scene/worlds/ur3.wbt) scene.
+2. Run the following code:
+
+
+#### source file
+
+```cpp
+#include <dqrobotics/DQ.h>
+#include <dqrobotics/utils/DQ_Constants.h>
+#include <dqrobotics/interfaces/webots/DQ_WebotsInterface.h>
+#include <dqrobotics/interfaces/webots/robots/URXWebotsRobot.h>
+
+int main() {
+    auto wb = std::make_shared<DQ_WebotsInterface>();
+    wb->connect("ur3");
+    wb->set_stepping_mode(true);
+    wb->trigger_next_simulation_step();
+
+    auto URX = std::make_shared<URXWebotsRobot>(wb, URXWebotsRobot::MODEL::UR3);
+
+    VectorXd target = (VectorXd(6)<<pi/2,0,0,0,0,0).finished();
+
+    for(int i=0;i<100;i++)
+    {
+        URX->set_target_configuration(target);
+        auto q = URX->get_configuration();
+        wb->trigger_next_simulation_step();
+    }
+    wb->reset_simulation();
+}
+
+```
+
+#### CMake
+
+```cmake
+cmake_minimum_required(VERSION 3.5...3.26)
+
+project(ur3 LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+find_package(Eigen3 REQUIRED)
+if (APPLE)
+    set(WEBOTS_HOME /Applications/Webots.app/Contents/)
+    INCLUDE_DIRECTORIES(
+           /usr/local/include/
+           /usr/local/include/eigen3
+           # Most recent versions of brew install here
+           /opt/homebrew/include/
+           /opt/homebrew/include/eigen3
+       )
+   ADD_COMPILE_OPTIONS(-Werror=return-type -Wall -Wextra -Wmissing-declarations -Wredundant-decls -Woverloaded-virtual)
+   LINK_DIRECTORIES(
+       /usr/local/lib/
+       /opt/homebrew/lib
+       ${WEBOTS_HOME}/lib/controller)
+endif()
+add_executable(${PROJECT_NAME}
+               ${PROJECT_NAME}.cpp)
+
+target_link_libraries(${PROJECT_NAME}
+    dqrobotics
+    dqrobotics-interface-webots)
+```
+
