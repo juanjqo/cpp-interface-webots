@@ -11,6 +11,11 @@
 |    | Ubuntu LTS ![Static Badge](https://img.shields.io/badge/x64-blue) ![Static Badge](https://img.shields.io/badge/arm64-blue)  |  ![Static Badge](https://img.shields.io/badge/beta-yellow)|
 |   | Windows 11 ![Static Badge](https://img.shields.io/badge/x64-blue) ![Static Badge](https://img.shields.io/badge/arm64-blue)   |  ![Static Badge](https://img.shields.io/badge/unsupported-gray) | 
 
+### Prerequisites
+
+1. [DQ Robotics](https://github.com/dqrobotics).
+2. [Webots](https://cyberbotics.com/#webots).
+
 
 ### Install (UNIX)
 
