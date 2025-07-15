@@ -106,7 +106,7 @@ INSTALL(FILES
 # Robots
 INSTALL(FILES
     include/dqrobotics/interfaces/webots/robots/URXWebotsRobot.h
-    DESTINATION "include/dqrobotics/interfaces/webots/crobots")
+    DESTINATION "include/dqrobotics/interfaces/webots/robots")
 
 ################################################################
 # INSTALL SOURCE FILES (So that the debugger can find them)
