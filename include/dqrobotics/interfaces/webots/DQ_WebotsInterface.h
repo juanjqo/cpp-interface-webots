@@ -74,8 +74,7 @@ private:
     std::string DEF_;
 
 
-    static constexpr int ROT_SIZE_ = 4;
-    static constexpr int POS_SIZE_ = 3;
+
 
     DQ     _get_object_translation(const std::string& objectname);
     void   _set_object_translation(const std::string& objectname, const DQ& t);

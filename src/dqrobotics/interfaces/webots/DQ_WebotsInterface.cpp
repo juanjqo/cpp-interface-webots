@@ -30,6 +30,12 @@ Contributors:
 #include <webots/Motor.hpp>
 #include <unordered_map>
 
+
+namespace DQ_WebotsInterface_internal{
+static constexpr int ROT_SIZE_ = 4;
+static constexpr int POS_SIZE_ = 3;
+}
+
 class DQ_WebotsInterface::Impl
 {
 protected:
@@ -108,6 +114,8 @@ public:
     std::shared_ptr<webots::Supervisor> supervisor_;
     webots::Node* robot_node_;
     int sampling_period_;
+
+
 
 
     Impl(const int& sampling_period)
@@ -299,7 +307,7 @@ DQ DQ_WebotsInterface::_get_object_translation(const std::string &objectname)
 {
     webots::Field* translation_field = impl_->get_object_node_from_map(objectname)->getField("translation");
     const double* t = translation_field->getSFVec3f();
-    auto t_vec = impl_->convert_to_std_vector<POS_SIZE_>(t);
+    auto t_vec = impl_->convert_to_std_vector<DQ_WebotsInterface_internal::POS_SIZE_>(t);
     const auto& [x,y,z] = t_vec; //Aliasing
     return  x*i_ + y*j_ + z*k_;
 }
@@ -314,10 +322,10 @@ DQ DQ_WebotsInterface::_get_object_translation(const std::string &objectname)
 DQ DQ_WebotsInterface::_get_object_rotation(const std::string &objectname)
 {
     webots::Field *rotation_field = impl_->get_object_node_from_map(objectname)->getField("rotation");
-    const double *rv = rotation_field->getSFRotation();
+    const double *r = rotation_field->getSFRotation();
 
-    auto rv_vec = impl_->convert_to_std_vector<ROT_SIZE_>(rv);
-    const auto& [x,y,z,angle] = rv_vec; //Aliasing
+    auto r_vec = impl_->convert_to_std_vector<DQ_WebotsInterface_internal::ROT_SIZE_>(r);
+    const auto& [x,y,z,angle] = r_vec; //Aliasing
 
     DQ n = (x*i_ + y*j_ + z*k_).normalize();
     return cos(angle/2) + n*sin(angle/2);
