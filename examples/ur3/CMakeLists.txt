@@ -8,6 +8,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
 find_package(Eigen3 REQUIRED)
+
+
+if (UNIX AND NOT APPLE)
+    set(WEBOTS_HOME "/usr/local/webots")
+    link_directories(${WEBOTS_HOME}/lib/controller)
+endif()
+
+
 if (APPLE)
     set(WEBOTS_HOME /Applications/Webots.app/Contents/)
     INCLUDE_DIRECTORIES(
