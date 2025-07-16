@@ -8,7 +8,7 @@
 |  GH Actions  | SO | Status (C++17) | 
 | ------------- | ------------- |------------- |
 | | macOS ![Static Badge](https://img.shields.io/badge/Apple_silicon-magenta) | ![Static Badge](https://img.shields.io/badge/beta-yellow)|
-|    | Ubuntu LTS ![Static Badge](https://img.shields.io/badge/x64-blue) ![Static Badge](https://img.shields.io/badge/arm64-blue)  |  ![Static Badge](https://img.shields.io/badge/beta-yellow)|
+| [![CPP Build](https://github.com/juanjqo/cpp-interface-webots/actions/workflows/ubuntu.yaml/badge.svg)](https://github.com/juanjqo/cpp-interface-webots/actions/workflows/ubuntu.yaml)   | Ubuntu LTS ![Static Badge](https://img.shields.io/badge/x64-blue) ![Static Badge](https://img.shields.io/badge/arm64-blue)  |  ![Static Badge](https://img.shields.io/badge/beta-yellow)|
 |   | Windows 11 ![Static Badge](https://img.shields.io/badge/x64-blue) ![Static Badge](https://img.shields.io/badge/arm64-blue)   |  ![Static Badge](https://img.shields.io/badge/unsupported-gray) | 
 
 ### Prerequisites
