@@ -1,0 +1,43 @@
+name: CPP Build
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        testbranches: ['master']
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Apt update
+        run: sudo apt update
+
+      - name:  Install Webots
+        run: |
+          curl https://github.com/cyberbotics/webots/releases/download/R2025a/webots_2025a_amd64.deb
+          sudo apt install ./webots_2025a_amd64.deb  
+      
+      - name: Install DQ Robotics package
+        run: | 
+          sudo add-apt-repository ppa:dqrobotics-dev/development 
+          sudo apt-get update && sudo apt-get install -y cmake g++ libeigen3-dev fakeroot libdqrobotics libdqrobotics-interface-json11 libdqrobotics-interface-qpoases
+
+          
+      - name: Build # This is only to use the installation scripts on dqrobotics/cpp
+        run: | 
+          git clone https://github.com/dqrobotics/cpp
+          sh ./cpp/.github/scripts/macos/build.sh
+          
+      - name: Install
+        run: sh ./cpp/.github/scripts/macos/install.sh
+
+      - name: Build examples (ur3)
+        run: |
+             cd examples/ur3
+             mkdir -p build && cd build
+             cmake ..
+             make
