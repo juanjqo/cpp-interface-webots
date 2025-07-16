@@ -49,8 +49,8 @@ protected:
         check_pointer(sensor, "Joint sensor \""+sensor_name+"\" not found in the current world file. \n");
 
         // Update the position sensor map
-        auto rtn = position_sensor_map_.try_emplace(sensor_name, sensor);
-        if (std::get<1>(rtn)) // If the map is updated, enable the position sensor.
+        auto [ith, found] = position_sensor_map_.try_emplace(sensor_name, sensor);
+        if (found) // If the map is updated, enable the position sensor.
             sensor->enable(sampling_period_);
         return sensor;
     }
@@ -108,6 +108,7 @@ public:
     std::shared_ptr<webots::Supervisor> supervisor_;
     webots::Node* robot_node_;
     int sampling_period_;
+
 
     Impl(const int& sampling_period)
         :sampling_period_{sampling_period}
@@ -174,11 +175,26 @@ public:
      * @param msg
      */
     template <typename T>
-    void check_pointer(T pointer, const std::string& msg)
+    void check_pointer(T pointer, const std::string& msg) const
     {
         if (not pointer)
             throw std::runtime_error(msg);
     }
+
+
+    /**
+     * @brief convert_to_std_vector
+     * @param raw_data
+     * @return
+     */
+    template <std::size_t N>
+    std::array<double, N> convert_to_std_vector(const double* raw_data) const
+    {
+        std::array<double, N> vec;
+        std::copy(raw_data, raw_data + N, vec.begin());
+        return vec;
+    }
+
 
 };
 
@@ -283,9 +299,8 @@ DQ DQ_WebotsInterface::_get_object_translation(const std::string &objectname)
 {
     webots::Field* translation_field = impl_->get_object_node_from_map(objectname)->getField("translation");
     const double* t = translation_field->getSFVec3f();
-    const double x = t[0];
-    const double y = t[1];
-    const double z = t[2];
+    auto t_vec = impl_->convert_to_std_vector<POS_SIZE_>(t);
+    const auto& [x,y,z] = t_vec; //Aliasing
     return  x*i_ + y*j_ + z*k_;
 }
 
@@ -300,10 +315,9 @@ DQ DQ_WebotsInterface::_get_object_rotation(const std::string &objectname)
 {
     webots::Field *rotation_field = impl_->get_object_node_from_map(objectname)->getField("rotation");
     const double *rv = rotation_field->getSFRotation();
-    const double x = rv[0];
-    const double y = rv[1];
-    const double z = rv[2];
-    const double angle = rv[3];
+
+    auto rv_vec = impl_->convert_to_std_vector<ROT_SIZE_>(rv);
+    const auto& [x,y,z,angle] = rv_vec; //Aliasing
 
     DQ n = (x*i_ + y*j_ + z*k_).normalize();
     return cos(angle/2) + n*sin(angle/2);
@@ -352,11 +366,21 @@ void DQ_WebotsInterface::set_joint_target_positions(const std::vector<std::strin
         impl_->get_joint_motor_from_map(jointnames.at(i))->setPosition(joint_target_positions[i]);
 }
 
+
+/**
+ * @brief DQ_WebotsInterface::test_proto
+ * @param DEF
+ */
 void DQ_WebotsInterface::test_proto(const std::string &DEF)
 {
     ///auto node = impl_->supervisor_->get
 }
 
+
+/**
+ * @brief DQ_WebotsInterface::get_robot_name
+ * @return
+ */
 std::string DQ_WebotsInterface::get_robot_name() const
 {
     return DEF_;

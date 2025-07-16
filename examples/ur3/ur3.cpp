@@ -20,7 +20,10 @@ int main() {
     {
         URX->set_target_configuration(target);
         auto q = URX->get_configuration();
+        DQ x = wb->get_object_pose(wb->get_robot_name());
+        std::cout<<x<<std::endl;
         wb->trigger_next_simulation_step();
+
     }
     wb->reset_simulation();
 }

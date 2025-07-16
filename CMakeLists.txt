@@ -132,3 +132,16 @@ INSTALL(FILES
         src/dqrobotics/interfaces/webots/robots/URXWebotsRobot.cpp
     DESTINATION "src/dqrobotics/interfaces/webots/robots")
 
+
+
+#For debug
+#include_directories(        include
+#    ${WEBOTS_HOME}/include/controller/c
+#    ${WEBOTS_HOME}/include/controller/cpp)
+#add_executable(test
+#               examples/ur3/ur3.cpp)
+
+#target_link_libraries(test
+#    Eigen3::Eigen
+#    dqrobotics
+#    dqrobotics-interface-webots)
