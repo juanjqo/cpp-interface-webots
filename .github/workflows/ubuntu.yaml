@@ -18,7 +18,7 @@ jobs:
 
       - name:  Install Webots
         run: |
-          curl https://github.com/cyberbotics/webots/releases/download/R2025a/webots_2025a_amd64.deb
+          curl -LO https://github.com/cyberbotics/webots/releases/download/R2025a/webots_2025a_amd64.deb
           sudo apt install ./webots_2025a_amd64.deb  
       
       - name: Install DQ Robotics package
