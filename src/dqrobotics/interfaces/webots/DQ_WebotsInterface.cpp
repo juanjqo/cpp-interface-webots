@@ -287,11 +287,11 @@ void DQ_WebotsInterface::_set_object_rotation(const std::string &objectname, con
 {
     webots::Field *rotation_field = impl_->get_object_node_from_map(objectname)->getField("rotation");
     const VectorXd vec_r = r.vec4();
-    const VectorXd axis = r.rotation_axis().vec3();
-    const double angle = r.rotation_angle();
-    const double x = axis[0];
-    const double y = axis[1];
-    const double z = axis[2];
+    const VectorXd axis  = r.rotation_axis().vec3();
+    const double angle   = r.rotation_angle();
+    const double x       = axis[0];
+    const double y       = axis[1];
+    const double z       = axis[2];
     const double values[4] = {x,y,z, angle};
     rotation_field->setSFRotation(values);
 }
