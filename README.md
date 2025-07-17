@@ -31,6 +31,11 @@ make
 sudo make install
 ```
 
+Ubuntu users may require this additional step:
+```shell
+sudo ldconfig
+```
+
 ### Example
 
 1. Open the [ur3.wbt](https://github.com/juanjqo/cpp-interface-webots/blob/main/examples/ur3/webots_scene/worlds/ur3.wbt) scene.
