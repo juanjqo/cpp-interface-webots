@@ -32,8 +32,8 @@ Contributors:
 
 
 namespace DQ_WebotsInterface_internal{
-static constexpr int ROT_SIZE_ = 4;
-static constexpr int POS_SIZE_ = 3;
+    static constexpr int ROT_SIZE_ = 4;
+    static constexpr int POS_SIZE_ = 3;
 }
 
 class DQ_WebotsInterface::Impl
@@ -178,7 +178,7 @@ public:
     }
 
     /**
-     * @brief _check_pointer
+     * @brief _check_pointer throws an exception if the pointer is invalid.
      * @param pointer
      * @param msg
      */
@@ -191,9 +191,10 @@ public:
 
 
     /**
-     * @brief convert_to_std_vector
-     * @param raw_data
-     * @return
+     * @brief convert_to_std_vector convert a raw array of type double* to a std::array. The size of the raw array must be known
+     *              when you call this method. Example: convert_to_std_array<size>(raw_array).
+     * @param raw_data The raw array
+     * @return The std::array
      */
     template <std::size_t N>
     std::array<double, N> convert_to_std_array(const double* raw_data) const
@@ -205,6 +206,15 @@ public:
 
 
 };
+
+
+
+
+
+
+
+
+
 
 
 /**
@@ -255,10 +265,8 @@ void DQ_WebotsInterface::set_object_pose(const std::string &objectname, const DQ
 {
     if (!is_unit(pose))
         throw std::runtime_error(error_msg_layout_+std::string(__func__)+". The pose must be a unit dual quaternion!");
-    const DQ t = pose.translation();
-    const DQ r = pose.rotation();
-    _set_object_rotation(objectname, r);
-    _set_object_translation(objectname, t);
+    _set_object_rotation   (objectname, pose.rotation());
+    _set_object_translation(objectname, pose.translation());
 }
 
 
@@ -274,7 +282,6 @@ void DQ_WebotsInterface::_set_object_translation(const std::string &objectname, 
     VectorXd vec_t = t.vec3();
     const double values[3] = {vec_t(0),vec_t(1),vec_t(2)};
     translation_field->setSFVec3f(values);
-
 }
 
 
@@ -376,16 +383,6 @@ void DQ_WebotsInterface::set_joint_target_positions(const std::vector<std::strin
 
 
 /**
- * @brief DQ_WebotsInterface::test_proto
- * @param DEF
- */
-void DQ_WebotsInterface::test_proto(const std::string &DEF)
-{
-    ///auto node = impl_->supervisor_->get
-}
-
-
-/**
  * @brief DQ_WebotsInterface::get_robot_name
  * @return
  */
@@ -395,7 +392,11 @@ std::string DQ_WebotsInterface::get_robot_name() const
 }
 
 
-/*
+/**
+ * @brief DQ_WebotsInterface::get_joint_velocities
+ * @param jointnames
+ * @return
+ */
 VectorXd DQ_WebotsInterface::get_joint_velocities(const std::vector<std::string> &jointnames)
 {
     const int n = jointnames.size();
@@ -404,7 +405,7 @@ VectorXd DQ_WebotsInterface::get_joint_velocities(const std::vector<std::string>
         joint_velocities[i] = impl_->get_joint_motor_from_map(jointnames.at(i))->getVelocity();
     return joint_velocities;
 }
-*/
+
 
 
 

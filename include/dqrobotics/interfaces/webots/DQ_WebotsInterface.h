@@ -40,31 +40,24 @@ public:
 
 
     bool connect(const std::string& robot_definition);
-
     void set_sampling_period(const int& sampling_period);
     int  get_sampling_period() const;
-
     void reset_simulation() const;
     void set_stepping_mode(const bool& flag) const;
     void trigger_next_simulation_step() const;
 
-
-
     DQ   get_object_pose(const std::string& objectname);
     void set_object_pose(const std::string& objectname, const DQ& pose);
-
 
     VectorXd get_joint_positions(const std::vector<std::string>& jointnames);
     void     set_joint_target_positions(const std::vector<std::string>& jointnames,
                                         const VectorXd& joint_target_positions);
 
-
-    //VectorXd get_joint_velocities(const std::vector<std::string>& jointnames);
-
-    void test_proto(const std::string& DEF);
-
-
     std::string get_robot_name() const;
+
+protected:
+    VectorXd get_joint_velocities(const std::vector<std::string>& jointnames);
+
 private:
 
     class Impl;
