@@ -196,7 +196,7 @@ public:
      * @return
      */
     template <std::size_t N>
-    std::array<double, N> convert_to_std_vector(const double* raw_data) const
+    std::array<double, N> convert_to_std_array(const double* raw_data) const
     {
         std::array<double, N> vec;
         std::copy(raw_data, raw_data + N, vec.begin());
@@ -307,7 +307,7 @@ DQ DQ_WebotsInterface::_get_object_translation(const std::string &objectname)
 {
     webots::Field* translation_field = impl_->get_object_node_from_map(objectname)->getField("translation");
     const double* t = translation_field->getSFVec3f();
-    auto t_vec = impl_->convert_to_std_vector<DQ_WebotsInterface_internal::POS_SIZE_>(t);
+    auto t_vec = impl_->convert_to_std_array<DQ_WebotsInterface_internal::POS_SIZE_>(t);
     const auto& [x,y,z] = t_vec; //Aliasing
     return  x*i_ + y*j_ + z*k_;
 }
@@ -324,7 +324,7 @@ DQ DQ_WebotsInterface::_get_object_rotation(const std::string &objectname)
     webots::Field *rotation_field = impl_->get_object_node_from_map(objectname)->getField("rotation");
     const double *r = rotation_field->getSFRotation();
 
-    auto r_vec = impl_->convert_to_std_vector<DQ_WebotsInterface_internal::ROT_SIZE_>(r);
+    auto r_vec = impl_->convert_to_std_array<DQ_WebotsInterface_internal::ROT_SIZE_>(r);
     const auto& [x,y,z,angle] = r_vec; //Aliasing
 
     DQ n = (x*i_ + y*j_ + z*k_).normalize();
