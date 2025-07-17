@@ -279,7 +279,7 @@ void DQ_WebotsInterface::set_object_pose(const std::string &objectname, const DQ
 void DQ_WebotsInterface::_set_object_translation(const std::string &objectname, const DQ &t)
 {
     webots::Field* translation_field= impl_->get_object_node_from_map(objectname)->getField("translation");
-    VectorXd vec_t = t.vec3();
+    const VectorXd vec_t = t.vec3();
     const double values[3] = {vec_t(0),vec_t(1),vec_t(2)};
     translation_field->setSFVec3f(values);
 }
@@ -314,7 +314,7 @@ DQ DQ_WebotsInterface::_get_object_translation(const std::string &objectname)
 {
     webots::Field* translation_field = impl_->get_object_node_from_map(objectname)->getField("translation");
     const double* t = translation_field->getSFVec3f();
-    auto t_vec = impl_->convert_to_std_array<DQ_WebotsInterface_internal::POS_SIZE_>(t);
+    const auto t_vec = impl_->convert_to_std_array<DQ_WebotsInterface_internal::POS_SIZE_>(t);
     const auto& [x,y,z] = t_vec; //Aliasing
     return  x*i_ + y*j_ + z*k_;
 }
@@ -331,7 +331,7 @@ DQ DQ_WebotsInterface::_get_object_rotation(const std::string &objectname)
     webots::Field *rotation_field = impl_->get_object_node_from_map(objectname)->getField("rotation");
     const double *r = rotation_field->getSFRotation();
 
-    auto r_vec = impl_->convert_to_std_array<DQ_WebotsInterface_internal::ROT_SIZE_>(r);
+    const auto r_vec = impl_->convert_to_std_array<DQ_WebotsInterface_internal::ROT_SIZE_>(r);
     const auto& [x,y,z,angle] = r_vec; //Aliasing
 
     DQ n = (x*i_ + y*j_ + z*k_).normalize();
