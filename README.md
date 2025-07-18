@@ -37,7 +37,7 @@ sudo ldconfig
 ```
 
 > [!NOTE]
-> To install a CMake project without sudo privileges, check this [tutorial](https://ros2-tutorial.readthedocs.io/en/latest/cmake/cmake_packages_without_sudo.html)
+> To install a CMake project without sudo privileges, check this [tutorial.](https://ros2-tutorial.readthedocs.io/en/latest/cmake/cmake_packages_without_sudo.html)
 
 
 ### Example
