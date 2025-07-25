@@ -7,7 +7,7 @@
 #include <signal.h>
 
 void handle_sigint(int sig){
-    std::cout<<"SIGINT received, but I don't care parcero"<<std::endl;
+    std::cout<<"SIGINT received"<<std::endl;
 }
 
 int main() {
@@ -38,7 +38,7 @@ int main() {
             raise(SIGINT);
             i++;
         } catch (...) {
-            std::cout<<"Pailander"<<std::endl;
+            std::cout<<"catch"<<std::endl;
         }
 
 
