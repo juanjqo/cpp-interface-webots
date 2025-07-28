@@ -36,6 +36,10 @@ Ubuntu users may require this additional step:
 sudo ldconfig
 ```
 
+> [!NOTE]
+> To install a CMake project without sudo privileges, check this [tutorial.](https://ros2-tutorial.readthedocs.io/en/latest/cmake/cmake_packages_without_sudo.html)
+
+
 ### Example
 
 1. Open the [ur3.wbt](https://github.com/juanjqo/cpp-interface-webots/blob/main/examples/ur3/webots_scene/worlds/ur3.wbt) scene.
