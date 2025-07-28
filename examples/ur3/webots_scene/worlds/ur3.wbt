@@ -16,19 +16,13 @@ TexturedBackground {
 TexturedBackgroundLight {
 }
 RectangleArena {
+  floorSize 2 2
 }
 DEF ur3 UR3e {
-  hidden translation_1 0 0 0.152
   hidden rotation_1 0 0 -1 3.0336056098763268e-05
-  hidden translation_2 0 0.12 0
   hidden rotation_2 0 1 0 1.5708137482363227
-  hidden translation_3 0 -0.093 0.244
   hidden rotation_3 0 1 0 5.549717385593703e-06
-  hidden translation_4 0 0 0.213
-  hidden rotation_4 0 1 0 1.5707942399783197
-  hidden translation_5 0 0.104 0
-  hidden rotation_5 0 0 1 0
-  hidden translation_6 0 0 0.085
+  hidden rotation_4 0 1 0 1.57079423997832
   controller "<extern>"
   supervisor TRUE
 }

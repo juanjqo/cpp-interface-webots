@@ -12,11 +12,12 @@ void handle_sigint(int sig){
 
 int main() {
     //std::signal(SIGINT, handle_sigint);
+    auto wb = std::make_shared<DQ_WebotsInterface>();
     if(signal(SIGINT, handle_sigint) == SIG_ERR)
     {
         throw std::runtime_error("::Error setting the signal int handler.");
     }
-    auto wb = std::make_shared<DQ_WebotsInterface>();
+
 
     wb->connect("ur3");
     wb->set_stepping_mode(true);
