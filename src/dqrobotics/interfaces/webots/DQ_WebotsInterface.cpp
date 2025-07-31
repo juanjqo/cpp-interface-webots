@@ -242,6 +242,7 @@ void DQ_WebotsInterface::trigger_next_simulation_step() const
 }
 
 
+
 /**
  * @brief DQ_WebotsInterface::get_object_pose returns a unit dual quaternion that represents
  *        the object pose in the Webots scene with respect to the absolute frame.
@@ -361,6 +362,7 @@ void DQ_WebotsInterface::set_stepping_mode(const bool &flag) const
  */
 VectorXd DQ_WebotsInterface::get_joint_positions(const std::vector<std::string> &jointnames)
 {
+    _check_connection(error_msg_layout_+std::string(__func__));
     const int n = jointnames.size();
     VectorXd joint_positions(n);
     for (int i=0;i<n;i++)
@@ -375,10 +377,51 @@ VectorXd DQ_WebotsInterface::get_joint_positions(const std::vector<std::string> 
  */
 void DQ_WebotsInterface::set_joint_target_positions(const std::vector<std::string> &jointnames, const VectorXd &joint_target_positions)
 {
+    _check_connection(error_msg_layout_+std::string(__func__));
     impl_->check_sizes(jointnames, joint_target_positions,
                        error_msg_layout_+std::string(__func__)+": arguments have different sizes!");
     for (int i=0;i<jointnames.size();i++)
-        impl_->get_joint_motor_from_map(jointnames.at(i))->setPosition(joint_target_positions[i]);
+    {
+        auto motor = impl_->get_joint_motor_from_map(jointnames.at(i));
+        motor->setVelocity(INFINITY);
+        motor->setPosition(joint_target_positions[i]);
+    }
+}
+
+
+/**
+ * @brief DQ_WebotsInterface::set_joint_target_velocities sets the joint target velocities on Webots.
+ * @param jointnames The name of the joint motors.
+ * @param joint_target_velocities The desired joint target velocities.
+ */
+void DQ_WebotsInterface::set_joint_target_velocities(const std::vector<std::string> &jointnames,
+                                                     const VectorXd &joint_target_velocities)
+{
+    _check_connection(error_msg_layout_+std::string(__func__));
+    impl_->check_sizes(jointnames, joint_target_velocities,
+                       error_msg_layout_+std::string(__func__)+": arguments have different sizes!");
+    for (int i=0;i<jointnames.size();i++)
+    {
+        auto motor = impl_->get_joint_motor_from_map(jointnames.at(i));
+        motor->setPosition(INFINITY);
+        motor->setVelocity(joint_target_velocities[i]);
+    }
+}
+
+
+/**
+ * @brief DQ_WebotsInterface::get_joint_velocities gets the joint velocities from Webots.
+ * @param jointnames The name of the joint position sensors.
+ * @return The desired joint velocities.
+ */
+VectorXd DQ_WebotsInterface::get_joint_velocities(const std::vector<std::string> &jointnames)
+{
+    _check_connection(error_msg_layout_+std::string(__func__));
+    const int n = jointnames.size();
+    VectorXd joint_velocities(n);
+    for (int i=0;i<n;i++)
+        joint_velocities[i] = impl_->get_joint_motor_from_map(jointnames.at(i))->getVelocity();
+    return joint_velocities;
 }
 
 
@@ -392,19 +435,7 @@ std::string DQ_WebotsInterface::get_robot_name() const
 }
 
 
-/**
- * @brief DQ_WebotsInterface::get_joint_velocities
- * @param jointnames
- * @return
- */
-VectorXd DQ_WebotsInterface::get_joint_velocities(const std::vector<std::string> &jointnames)
-{
-    const int n = jointnames.size();
-    VectorXd joint_velocities(n);
-    for (int i=0;i<n;i++)
-        joint_velocities[i] = impl_->get_joint_motor_from_map(jointnames.at(i))->getVelocity();
-    return joint_velocities;
-}
+
 
 
 

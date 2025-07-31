@@ -35,6 +35,8 @@ using namespace Eigen;
 class DQ_WebotsInterface
 {
 public:
+    enum class JOINT_CONTROL_MODE{POSITION, VELOCITY, TORQUE};
+public:
     DQ_WebotsInterface(const int& sampling_period = 32);
     virtual ~DQ_WebotsInterface() = default;
 
@@ -46,6 +48,7 @@ public:
     void set_stepping_mode(const bool& flag) const;
     void trigger_next_simulation_step() const;
 
+
     DQ   get_object_pose(const std::string& objectname);
     void set_object_pose(const std::string& objectname, const DQ& pose);
 
@@ -53,17 +56,21 @@ public:
     void     set_joint_target_positions(const std::vector<std::string>& jointnames,
                                         const VectorXd& joint_target_positions);
 
+    void     set_joint_target_velocities(const std::vector<std::string>& jointnames,
+                                         const VectorXd& joint_target_velocities);
+    VectorXd get_joint_velocities(const std::vector<std::string>& jointnames);
+
     std::string get_robot_name() const;
 
 protected:
-    VectorXd get_joint_velocities(const std::vector<std::string>& jointnames);
+
 
 private:
 
     class Impl;
     std::shared_ptr<Impl> impl_;
     void _check_connection(const std::string& msg) const;
-    std::string error_msg_layout_ = "Bad call in DQ_WebotsInterface::";
+    const std::string error_msg_layout_ = "Bad call in DQ_WebotsInterface::";
     std::string DEF_;
 
 
