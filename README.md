@@ -29,6 +29,12 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --parallel $(nproc)
 sudo cmake --install build
 ```
+> [!NOTE]
+> To generate the doxygen documentation, you can run
+> ```shell
+> cmake --build build --parallel $(nproc) --target doc
+> ```
+
 
 Ubuntu users may require this additional step:
 ```shell
