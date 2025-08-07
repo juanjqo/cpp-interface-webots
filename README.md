@@ -25,10 +25,9 @@ An unofficial DQ Robotics interface for C++17 to connect with Webots.
 ```shell
 cd ~/Downloads/ && git clone https://github.com/juanjqo/cpp-interface-webots
 cd ~/Downloads/cpp-interface-webots
-mkdir build && cd build
-cmake ..
-make
-sudo make install
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build --parallel $(nproc)
+sudo cmake --install build
 ```
 
 Ubuntu users may require this additional step:
