@@ -4,8 +4,8 @@ if (DOXYGEN_FOUND)
 
     # Set input directories as a CMake list
     set(DOXYGEN_INPUT_DIRS
-        "${CMAKE_CURRENT_SOURCE_DIR}/include/dqrobotics/interfaces/webots"
-        "${CMAKE_CURRENT_SOURCE_DIR}/dqrobotics/interfaces/webots"
+        "${CMAKE_CURRENT_SOURCE_DIR}/include/"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/"
     )
 
     # Convert to a space-separated string for Doxygen
