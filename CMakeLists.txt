@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5...3.26)
+cmake_minimum_required(VERSION 3.22...3.26)
 # https://cmake.org/cmake/help/latest/variable/BUILD_SHARED_LIBS.html
 option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 
@@ -6,12 +6,30 @@ if(WIN32)
     set(CMAKE_TOOLCHAIN_FILE C:/vcpkg/scripts/buildsystems/vcpkg.cmake)
 endif()
 
-project(dqrobotics-interface-webots LANGUAGES CXX)
+project(dqrobotics-interface-webots
+        VERSION 1.0
+        DESCRIPTION "An unofficial DQ Robotics interface for C++17 to connect with Webots."
+        HOMEPAGE_URL "https://github.com/juanjqo/cpp-interface-webots"
+        LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# strongly encouraged to enable this globally to avoid conflicts between
+# -Wpedantic being enabled and -std=c++20 and -std=gnu++20 for example
+# when compiling with PCH enabled
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+
+
+include(cmake/PreventInSourceBuilds.cmake)
+include(ProjectOptions.cmake)
+
+
+
 find_package(Eigen3 REQUIRED)
+find_library(MATH_LIBRARY m REQUIRED)
+
 
 if (UNIX AND NOT APPLE)
     set(WEBOTS_HOME "/usr/local/webots")
@@ -39,7 +57,6 @@ add_library(${PROJECT_NAME}
     src/dqrobotics/interfaces/webots/DQ_WebotsInterface.cpp
     src/dqrobotics/interfaces/webots/DQ_WebotsRobot.cpp
     src/dqrobotics/interfaces/webots/robots/URXWebotsRobot.cpp
-
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE
@@ -51,11 +68,28 @@ target_include_directories(${PROJECT_NAME} PRIVATE
         #$<BUILD_INTERFACE:${WEBOTS_HOME}/include/controller/cpp>
 )
 
+option(myproject_ENABLE_SANITIZER_ADDRESS "Enable address sanitizer" ${SUPPORTS_ASAN})
+option(myproject_ENABLE_SANITIZER_LEAK "Enable leak sanitizer" ON)
+option(myproject_ENABLE_SANITIZER_UNDEFINED "Enable undefined sanitizer" ${SUPPORTS_UBSAN})
+option(myproject_ENABLE_SANITIZER_THREAD "Enable thread sanitizer" OFF)
+option(myproject_ENABLE_SANITIZER_MEMORY "Enable memory sanitizer" OFF)
+
+include(cmake/Sanitizers.cmake)
+myproject_enable_sanitizers(
+  ${PROJECT_NAME}
+  ${myproject_ENABLE_SANITIZER_ADDRESS}
+  ${myproject_ENABLE_SANITIZER_LEAK}
+  ${myproject_ENABLE_SANITIZER_UNDEFINED}
+  ${myproject_ENABLE_SANITIZER_THREAD}
+  ${myproject_ENABLE_SANITIZER_MEMORY})
+
 #target_link_directories(${PROJECT_NAME} PRIVATE
 #    ${WEBOTS_HOME}/lib/controller
 #)
 
-set(WEBOT_LIBRARIES m ${CMAKE_SHARED_LIBRARY_PREFIX}Controller${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_SHARED_LIBRARY_PREFIX}CppController${CMAKE_SHARED_LIBRARY_SUFFIX})
+set(WEBOT_LIBRARIES ${MATH_LIBRARY}
+    ${CMAKE_SHARED_LIBRARY_PREFIX}Controller${CMAKE_SHARED_LIBRARY_SUFFIX}
+    ${CMAKE_SHARED_LIBRARY_PREFIX}CppController${CMAKE_SHARED_LIBRARY_SUFFIX})
 
 
 if(APPLE)
