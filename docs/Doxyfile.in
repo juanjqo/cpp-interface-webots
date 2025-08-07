@@ -1,9 +1,8 @@
-PROJECT_NAME           = "@PROJECT_NAME@"
-PROJECT_BRIEF          = "Documentation for @PROJECT_NAME@"
-OUTPUT_DIRECTORY       = "@CMAKE_CURRENT_BINARY_DIR@/docs"
-INPUT                  = @DOXYGEN_INPUT_DIRS@
-RECURSIVE              = YES
-GENERATE_LATEX         = NO
-QUIET                  = YES
-GENERATE_HTML          = YES
-EXTRACT_ALL            = YES
+# Doxyfile.in
+PROJECT_NAME = "@PROJECT_NAME@"
+INPUT = @DOXYGEN_INPUT_DIRS_STR@
+RECURSIVE = YES
+FILE_PATTERNS = *.hpp *.cpp *.h *.c
+GENERATE_HTML = YES
+QUIET = YES
+
