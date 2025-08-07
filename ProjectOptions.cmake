@@ -3,7 +3,7 @@
 include(CheckCXXCompilerFlag)
 
 include(cmake/InterproceduralOptimization.cmake)
-myproject_enable_ipo()
+
 
 macro(myproject_supports_sanitizers)
   if((CMAKE_CXX_COMPILER_ID MATCHES ".*Clang.*" OR CMAKE_CXX_COMPILER_ID MATCHES ".*GNU.*") AND NOT WIN32)
@@ -52,6 +52,6 @@ macro(myproject_supports_sanitizers)
   endif()
 endmacro()
 
-myproject_supports_sanitizers()
+
 
 

@@ -23,12 +23,44 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 
 include(cmake/PreventInSourceBuilds.cmake)
+myproject_assure_out_of_source_builds()
+
 include(ProjectOptions.cmake)
+myproject_enable_ipo()
 
 
 
 find_package(Eigen3 REQUIRED)
 find_library(MATH_LIBRARY m REQUIRED)
+
+find_package(Doxygen QUIET)
+
+if (DOXYGEN_FOUND)
+    message(STATUS "Doxygen found!")
+    set(DOXYGEN_INPUT_DIRS
+        "${CMAKE_CURRENT_SOURCE_DIR}/include"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src"
+    )
+
+    set(DOXYGEN_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/docs")
+
+    set(DOXYGEN_CONFIG_FILE "${CMAKE_CURRENT_BINARY_DIR}/Doxyfile")
+
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/docs/Doxyfile.in
+        ${DOXYGEN_CONFIG_FILE}
+        @ONLY
+    )
+
+    add_custom_target(doc
+        COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_CONFIG_FILE}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        COMMENT "Generating API documentation with Doxygen"
+        VERBATIM
+    )
+else()
+    message(STATUS "Doxygen not found. Documentation target will not be available.")
+endif()
 
 
 if (UNIX AND NOT APPLE)
@@ -68,24 +100,24 @@ target_include_directories(${PROJECT_NAME} PRIVATE
         #$<BUILD_INTERFACE:${WEBOTS_HOME}/include/controller/cpp>
 )
 
-option(myproject_ENABLE_SANITIZER_ADDRESS "Enable address sanitizer" ${SUPPORTS_ASAN})
-option(myproject_ENABLE_SANITIZER_LEAK "Enable leak sanitizer" ON)
-option(myproject_ENABLE_SANITIZER_UNDEFINED "Enable undefined sanitizer" ${SUPPORTS_UBSAN})
-option(myproject_ENABLE_SANITIZER_THREAD "Enable thread sanitizer" OFF)
-option(myproject_ENABLE_SANITIZER_MEMORY "Enable memory sanitizer" OFF)
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    myproject_supports_sanitizers()
+    include(cmake/Sanitizers.cmake)
+    option(myproject_ENABLE_SANITIZER_ADDRESS "Enable address sanitizer" ${SUPPORTS_ASAN})
+    option(myproject_ENABLE_SANITIZER_LEAK "Enable leak sanitizer" ON)
+    option(myproject_ENABLE_SANITIZER_UNDEFINED "Enable undefined sanitizer" ${SUPPORTS_UBSAN})
+    option(myproject_ENABLE_SANITIZER_THREAD "Enable thread sanitizer" OFF)
+    option(myproject_ENABLE_SANITIZER_MEMORY "Enable memory sanitizer" OFF)
 
-include(cmake/Sanitizers.cmake)
-myproject_enable_sanitizers(
-  ${PROJECT_NAME}
-  ${myproject_ENABLE_SANITIZER_ADDRESS}
-  ${myproject_ENABLE_SANITIZER_LEAK}
-  ${myproject_ENABLE_SANITIZER_UNDEFINED}
-  ${myproject_ENABLE_SANITIZER_THREAD}
-  ${myproject_ENABLE_SANITIZER_MEMORY})
+    myproject_enable_sanitizers(
+      ${PROJECT_NAME}
+      ${myproject_ENABLE_SANITIZER_ADDRESS}
+      ${myproject_ENABLE_SANITIZER_LEAK}
+      ${myproject_ENABLE_SANITIZER_UNDEFINED}
+      ${myproject_ENABLE_SANITIZER_THREAD}
+      ${myproject_ENABLE_SANITIZER_MEMORY})
+endif()
 
-#target_link_directories(${PROJECT_NAME} PRIVATE
-#    ${WEBOTS_HOME}/lib/controller
-#)
 
 set(WEBOT_LIBRARIES ${MATH_LIBRARY}
     ${CMAKE_SHARED_LIBRARY_PREFIX}Controller${CMAKE_SHARED_LIBRARY_SUFFIX}

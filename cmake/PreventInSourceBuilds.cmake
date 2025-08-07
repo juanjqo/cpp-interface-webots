@@ -16,4 +16,4 @@ function(myproject_assure_out_of_source_builds)
   endif()
 endfunction()
 
-myproject_assure_out_of_source_builds()
+
