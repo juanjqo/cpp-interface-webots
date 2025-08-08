@@ -20,6 +20,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # when compiling with PCH enabled
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# Apply -O3 for Release builds
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 
 include(cmake/PreventInSourceBuilds.cmake)
