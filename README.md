@@ -3,7 +3,7 @@
 # cpp-interface-webots (under development) 
 ### Don't use this interface for your project! :warning:
 
-An unofficial DQ Robotics interface for C++17 to connect with Webots.
+An unofficial DQ Robotics interface for C++17, enabling connection with Webots.
 
 <img src=https://github.com/juanjqo/capybara_toolkit/assets/23158313/2e0dbd2d-9b12-4930-9ffe-511d8270de03 width='250'>
 
